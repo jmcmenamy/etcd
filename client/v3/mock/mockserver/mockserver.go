@@ -131,6 +131,7 @@ func (ms *MockServers) StartAt(idx int) (err error) {
 	}
 
 	svr := grpc.NewServer()
+	fmt.Println("Making mockkvserver")
 	pb.RegisterKVServer(svr, &mockKVServer{})
 	pb.RegisterLeaseServer(svr, &mockLeaseServer{})
 	ms.Servers[idx].GRPCServer = svr

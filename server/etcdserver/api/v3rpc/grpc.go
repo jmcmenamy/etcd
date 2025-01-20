@@ -16,6 +16,7 @@ package v3rpc
 
 import (
 	"crypto/tls"
+	"fmt"
 	"math"
 
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
@@ -67,6 +68,7 @@ func Server(s *etcdserver.EtcdServer, tls *tls.Config, interceptor grpc.UnarySer
 
 	grpcServer := grpc.NewServer(append(opts, gopts...)...)
 
+	fmt.Println("Making newquotakvserver")
 	pb.RegisterKVServer(grpcServer, NewQuotaKVServer(s))
 	pb.RegisterWatchServer(grpcServer, NewWatchServer(s))
 	pb.RegisterLeaseServer(grpcServer, NewQuotaLeaseServer(s))

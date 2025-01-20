@@ -466,7 +466,13 @@ func (lkv *leasingKV) readySession() bool {
 	if lkv.session == nil {
 		return false
 	}
-	return !lkv.session.Expired()
+	// return !lkv.session.Expired()
+	select {
+	case <-lkv.session.Done():
+	default:
+		return true
+	}
+	return false
 }
 
 func (lkv *leasingKV) leaseID() v3.LeaseID {

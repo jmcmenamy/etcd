@@ -16,6 +16,7 @@ package grpcproxy
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -68,6 +69,7 @@ func (kts *kvproxyTestServer) close() {
 }
 
 func newKVProxyServer(endpoints []string, t *testing.T) *kvproxyTestServer {
+	fmt.Println("Making newkvproxytestserver")
 	cfg := clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,

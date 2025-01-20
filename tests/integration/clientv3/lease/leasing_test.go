@@ -424,8 +424,10 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	// There's no way to partition a client from the server, so use multiple
 	// servers and shut down a single server to partition the client from the
 	// system.
+	fmt.Println("HEYO GOT HERE 2")
 	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 3, UseBridge: true})
 	defer clus.Terminate(t)
+	fmt.Println("HEY GOT HERE")
 
 	// Try to make sure server 0 is not the leader
 	if clus.Members[0].Server.Leader() == clus.Members[0].Server.MemberID() {

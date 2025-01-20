@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
 
@@ -37,6 +38,25 @@ import (
 const (
 	grpcOverheadBytes = 512 * 1024
 )
+
+type ShiVizLogger struct {
+	*zap.Logger
+}
+
+// Info logs a message at InfoLevel. The message includes any fields passed
+// at the log site, as well as any fields accumulated on the logger.
+func (log *ShiVizLogger) Info(msg string, fields ...zap.Field) {
+	fields = append(fields, zap.String("message", "msg"))
+	log.Logger.Info(msg, fields...)
+}
+
+// Panic logs a message at PanicLevel. The message includes any fields passed
+// at the log site, as well as any fields accumulated on the logger.
+//
+// The logger then panics, even if logging at PanicLevel is disabled.
+func (log *ShiVizLogger) Panic(msg string, fields ...zap.Field) {
+	log.Logger.Panic(msg, fields...)
+}
 
 // ServerConfig holds the configuration of etcd as taken from the command line or discovery.
 type ServerConfig struct {
@@ -158,7 +178,8 @@ type ServerConfig struct {
 	SocketOpts transport.SocketOpts
 
 	// Logger logs server-side operations.
-	Logger *zap.Logger
+	Logger       *zap.Logger
+	shivizLogger govec.GoLog
 
 	ForceNewCluster bool
 

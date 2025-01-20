@@ -757,6 +757,7 @@ func memberLogger(t testutil.TB, name string) (*zap.Logger, *testutils.LogObserv
 
 	obCore, logOb := testutils.NewLogObserver(level)
 
+	fmt.Printf("Hey got here name is %v\n", name)
 	options := zaptest.WrapOptions(
 		zap.Fields(zap.String("member", name)),
 

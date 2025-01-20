@@ -395,6 +395,7 @@ func newClient(cfg *Config) (*Client, error) {
 	}
 
 	var err error
+	fmt.Println("LOOK MAKING CLIENT HERE!")
 	if cfg.Logger != nil {
 		client.lg = cfg.Logger
 	} else if cfg.LogConfig != nil {
