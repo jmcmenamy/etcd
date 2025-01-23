@@ -92,6 +92,8 @@ replace (
 
 replace go.etcd.io/raft/v3 => ../../raft
 
+replace github.com/DistributedClocks/GoVector => ../../GoVector
+
 // Bad imports are sometimes causing attempts to pull that code.
 // This makes the error more explicit.
 replace go.etcd.io/etcd => ./FORBIDDEN_DEPENDENCY

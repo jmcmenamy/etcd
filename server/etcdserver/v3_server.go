@@ -20,6 +20,7 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	errorspkg "errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -758,6 +759,7 @@ func (s *EtcdServer) processInternalRaftRequestOnce(ctx context.Context, r pb.In
 		}
 	}
 
+	fmt.Printf("data for proposal is %v, memberId is %v\n", r, s.memberID)
 	data, err := r.Marshal()
 	if err != nil {
 		return nil, err
