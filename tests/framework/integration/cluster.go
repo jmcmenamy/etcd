@@ -34,6 +34,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/soheilhy/cmux"
@@ -735,6 +736,7 @@ func MustNewMember(t testutil.TB, mcfg MemberConfig) *Member {
 	m.GRPCServerRecorder = &grpctesting.GRPCRecorder{}
 
 	m.Logger, m.LogObserver = memberLogger(t, mcfg.Name)
+	m.ShivizLogger = govec.InitGoVector(fmt.Sprintf("etcd_server_%v", m.UniqNumber), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", mcfg.Name), govec.GetDefaultConfig())
 	m.ServerFeatureGate = features.NewDefaultServerFeatureGate(m.Name, m.Logger)
 
 	m.StrictReconfigCheck = !mcfg.DisableStrictReconfigCheck

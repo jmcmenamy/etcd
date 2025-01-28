@@ -72,7 +72,7 @@ message InternalRaftRequest {
   membershippb.ClusterMemberAttrSetRequest cluster_member_attr_set = 1301 [(versionpb.etcd_version_field) = "3.5"];
   membershippb.DowngradeInfoSetRequest  downgrade_info_set = 1302 [(versionpb.etcd_version_field) = "3.5"];
 
-  bytes shivizdata = 1400
+  bytes Shivizdata = 1400;
 }
 
 message EmptyResponse {

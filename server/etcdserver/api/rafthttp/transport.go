@@ -20,6 +20,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/xiang90/probing"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
@@ -95,7 +96,8 @@ type Transporter interface {
 // User needs to call Start before calling other functions, and call
 // Stop when the Transport is no longer used.
 type Transport struct {
-	Logger *zap.Logger
+	Logger       *zap.Logger
+	ShivizLogger *govec.GoLog
 
 	DialTimeout time.Duration // maximum duration before timing out dial of the request
 	// DialRetryFrequency defines the frequency of streamReader dial retrial attempts;

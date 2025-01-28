@@ -179,7 +179,7 @@ type ServerConfig struct {
 
 	// Logger logs server-side operations.
 	Logger       *zap.Logger
-	shivizLogger govec.GoLog
+	ShivizLogger *govec.GoLog
 
 	ForceNewCluster bool
 
