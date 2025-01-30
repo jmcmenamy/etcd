@@ -427,7 +427,7 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	fmt.Println("HEYO GOT HERE 2")
 	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 3, UseBridge: true})
 	defer clus.Terminate(t)
-	fmt.Println("HEY GOT HERE")
+	fmt.Printf("HEY GOT HERE\n")
 
 	// Try to make sure server 0 is not the leader
 	if clus.Members[0].Server.Leader() == clus.Members[0].Server.MemberID() {
@@ -476,11 +476,13 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	if len(resp.Kvs) != 1 || string(resp.Kvs[0].Value) != "def" {
 		t.Fatalf(`expected "k"->"def" from lkv1, got response %+v`, resp)
 	}
-
+	fmt.Printf("Calling goroutine\n")
 	go func() {
 		// Eventually bring back the server so the disconnected client can
 		// finish its last `Get()`.
+		fmt.Printf("Gonna sleep\n")
 		time.Sleep(1 * time.Second)
+		fmt.Printf("In test restarting %v\n", clus.Members[0].Name)
 		clus.Members[0].Restart(t)
 	}()
 	cachedResp, err := lkv0.Get(context.TODO(), "k")

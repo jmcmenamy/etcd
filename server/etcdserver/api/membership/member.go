@@ -50,6 +50,7 @@ type Member struct {
 // cluster name, peer URLs, and time. This is used for bootstrapping/adding new member.
 func NewMember(name string, peerURLs types.URLs, clusterName string, now *time.Time) *Member {
 	memberID := computeMemberID(peerURLs, clusterName, now)
+	fmt.Printf("Computed member id %v for %v\n", memberID, name)
 	return newMember(name, peerURLs, memberID, false)
 }
 
@@ -57,6 +58,7 @@ func NewMember(name string, peerURLs types.URLs, clusterName string, now *time.T
 // cluster name, peer URLs, and time. This is used for adding new learner member.
 func NewMemberAsLearner(name string, peerURLs types.URLs, clusterName string, now *time.Time) *Member {
 	memberID := computeMemberID(peerURLs, clusterName, now)
+	fmt.Printf("Computed member as learner id %v for %v\n", memberID, name)
 	return newMember(name, peerURLs, memberID, true)
 }
 

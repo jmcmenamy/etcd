@@ -736,7 +736,7 @@ func MustNewMember(t testutil.TB, mcfg MemberConfig) *Member {
 	m.GRPCServerRecorder = &grpctesting.GRPCRecorder{}
 
 	m.Logger, m.LogObserver = memberLogger(t, mcfg.Name)
-	m.ShivizLogger = govec.InitGoVector(fmt.Sprintf("etcd_server_%v", m.UniqNumber), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", mcfg.Name), govec.GetDefaultConfig())
+	// m.ShivizLogger = govec.InitGoVector(fmt.Sprintf("etcd_server_%v", m.UniqNumber), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", mcfg.Name), govec.GetDefaultConfig())
 	m.ServerFeatureGate = features.NewDefaultServerFeatureGate(m.Name, m.Logger)
 
 	m.StrictReconfigCheck = !mcfg.DisableStrictReconfigCheck
@@ -890,7 +890,10 @@ func (m *Member) ElectionTimeout() time.Duration {
 	return time.Duration(m.Server.Cfg.ElectionTicks*int(m.Server.Cfg.TickMs)) * time.Millisecond
 }
 
-func (m *Member) ID() types.ID { return m.Server.MemberID() }
+func (m *Member) ID() types.ID {
+	fmt.Printf("HAH! %v %v\n", m, m.Server)
+	return m.Server.MemberID()
+}
 
 // NewClientV3 creates a new grpc client connection to the member
 func NewClientV3(m *Member) (*clientv3.Client, error) {
@@ -964,10 +967,23 @@ func (m *Member) Launch() error {
 		zap.String("grpc-url", m.GRPCURL),
 	)
 	var err error
+	var shouldInit bool
+	if m.ShivizLogger == nil {
+		shouldInit = true
+		m.ShivizLogger = govec.UninitializedGoVector()
+	}
 	if m.Server, err = etcdserver.NewServer(m.ServerConfig); err != nil {
+		fmt.Printf("UH OH!!\n")
 		return fmt.Errorf("failed to initialize the etcd server: %w", err)
 	}
 	m.Server.SyncTicker = time.NewTicker(500 * time.Millisecond)
+	if shouldInit {
+		fmt.Printf("LOOK HERE MAKING NEW GO VECTOR %v\n", fmt.Sprintf("etcd_server_%v", m.ID()))
+		m.ShivizLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()), govec.GetDefaultConfig())
+	} else {
+		fmt.Printf("Not making new go vector for %v %v\n", m.ID(), m.Name)
+	}
+	fmt.Printf("Launched member %v %v %v\n", m.ID(), m.Name, shouldInit)
 	m.Server.Start()
 
 	var peerTLScfg *tls.Config
@@ -1282,6 +1298,7 @@ func (m *Member) Restart(t testutil.TB) error {
 		}
 	}
 
+	fmt.Printf("Launching member %v again\n", m.Name)
 	err := m.Launch()
 	m.Logger.Info(
 		"restarted a member",

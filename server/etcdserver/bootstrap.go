@@ -272,6 +272,7 @@ func maybeDefragBackend(cfg config.ServerConfig, be backend.Backend) error {
 func bootstrapCluster(cfg config.ServerConfig, bwal *bootstrappedWAL, prt http.RoundTripper) (c *bootstrappedCluster, err error) {
 	switch {
 	case bwal == nil && !cfg.NewCluster:
+		fmt.Printf("Not new cluster here!\n")
 		c, err = bootstrapExistingClusterNoWAL(cfg, prt)
 	case bwal == nil && cfg.NewCluster:
 		c, err = bootstrapNewClusterNoWAL(cfg, prt)
