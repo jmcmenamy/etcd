@@ -428,6 +428,8 @@ message ResponseHeader {
 }
 
 message RangeRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   enum SortOrder {
@@ -512,6 +514,8 @@ message RangeResponse {
 }
 
 message PutRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // key is the key, in bytes, to put into the key-value store.
@@ -544,6 +548,8 @@ message PutResponse {
 }
 
 message DeleteRangeRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // key is the first key to delete in the range.
@@ -655,6 +661,8 @@ message Compare {
 // true.
 // 3. A list of database operations called f op. Like t op, but executed if guard evaluates to false.
 message TxnRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // compare is a list of predicates representing a conjunction of terms.
@@ -683,6 +691,8 @@ message TxnResponse {
 // CompactionRequest compacts the key-value store up to a given revision. All superseded keys
 // with a revision less than the compaction revision will be removed.
 message CompactionRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // revision is the key-value store revision for the compaction operation.
@@ -700,10 +710,14 @@ message CompactionResponse {
 }
 
 message HashRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
 message HashKVRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
   // revision is the key-value store revision for the hash operation.
   int64 revision = 1;
@@ -730,6 +744,8 @@ message HashResponse {
 }
 
 message SnapshotRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
 }
 
@@ -753,6 +769,8 @@ message SnapshotResponse {
 }
 
 message WatchRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
   // request_union is a request to either create a new watcher or cancel an existing watcher.
   oneof request_union {
@@ -763,6 +781,8 @@ message WatchRequest {
 }
 
 message WatchCreateRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // key is the key to register for watching.
@@ -812,6 +832,8 @@ message WatchCreateRequest {
 }
 
 message WatchCancelRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.1";
   // watch_id is the watcher id to cancel so that no more events are transmitted.
   int64 watch_id = 1 [(versionpb.etcd_version_field)="3.1"];
@@ -820,6 +842,8 @@ message WatchCancelRequest {
 // Requests the a watch stream progress status be sent in the watch response stream as soon as
 // possible.
 message WatchProgressRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.4";
 }
 
@@ -861,6 +885,8 @@ message WatchResponse {
 }
 
 message LeaseGrantRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // TTL is the advisory time-to-live in seconds. Expired lease will return -1.
@@ -881,6 +907,8 @@ message LeaseGrantResponse {
 }
 
 message LeaseRevokeRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // ID is the lease ID to revoke. When the ID is revoked, all associated keys will be deleted.
@@ -904,6 +932,8 @@ message LeaseCheckpoint {
 }
 
 message LeaseCheckpointRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.4";
 
   repeated LeaseCheckpoint checkpoints = 1;
@@ -916,6 +946,8 @@ message LeaseCheckpointResponse {
 }
 
 message LeaseKeepAliveRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
   // ID is the lease ID for the lease to keep alive.
   int64 ID = 1;
@@ -932,6 +964,8 @@ message LeaseKeepAliveResponse {
 }
 
 message LeaseTimeToLiveRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.1";
   // ID is the lease ID for the lease.
   int64 ID = 1;
@@ -954,6 +988,8 @@ message LeaseTimeToLiveResponse {
 }
 
 message LeaseLeasesRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
 }
 
@@ -987,6 +1023,8 @@ message Member {
 }
 
 message MemberAddRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // peerURLs is the list of URLs the added member will use to communicate with the cluster.
@@ -1006,6 +1044,8 @@ message MemberAddResponse {
 }
 
 message MemberRemoveRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
   // ID is the member ID of the member to remove.
   uint64 ID = 1;
@@ -1020,6 +1060,8 @@ message MemberRemoveResponse {
 }
 
 message MemberUpdateRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // ID is the member ID of the member to update.
@@ -1037,6 +1079,8 @@ message MemberUpdateResponse{
 }
 
 message MemberListRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   bool linearizable = 1 [(versionpb.etcd_version_field)="3.5"];
@@ -1051,6 +1095,8 @@ message MemberListResponse {
 }
 
 message MemberPromoteRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.4";
   // ID is the member ID of the member to promote.
   uint64 ID = 1;
@@ -1065,6 +1111,8 @@ message MemberPromoteResponse {
 }
 
 message DefragmentRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
@@ -1075,6 +1123,8 @@ message DefragmentResponse {
 }
 
 message MoveLeaderRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
   // targetID is the node ID for the new leader.
   uint64 targetID = 1;
@@ -1095,6 +1145,8 @@ enum AlarmType {
 }
 
 message AlarmRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   enum AlarmAction {
@@ -1132,6 +1184,8 @@ message AlarmResponse {
 }
 
 message DowngradeRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.5";
 
   enum DowngradeAction {
@@ -1159,6 +1213,8 @@ message DowngradeResponse {
 }
 
 message StatusRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
@@ -1191,18 +1247,26 @@ message StatusResponse {
 }
 
 message AuthEnableRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
 message AuthDisableRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
 message AuthStatusRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.5";
 }
 
 message AuthenticateRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string name = 1;
@@ -1210,6 +1274,8 @@ message AuthenticateRequest {
 }
 
 message AuthUserAddRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string name = 1;
@@ -1219,18 +1285,24 @@ message AuthUserAddRequest {
 }
 
 message AuthUserGetRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string name = 1;
 }
 
 message AuthUserDeleteRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
   // name is the name of the user to delete.
   string name = 1;
 }
 
 message AuthUserChangePasswordRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // name is the name of the user whose password is being changed.
@@ -1242,6 +1314,8 @@ message AuthUserChangePasswordRequest {
 }
 
 message AuthUserGrantRoleRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // user is the name of the user which should be granted a given role.
@@ -1251,6 +1325,8 @@ message AuthUserGrantRoleRequest {
 }
 
 message AuthUserRevokeRoleRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string name = 1;
@@ -1258,6 +1334,8 @@ message AuthUserRevokeRoleRequest {
 }
 
 message AuthRoleAddRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // name is the name of the role to add to the authentication system.
@@ -1265,26 +1343,36 @@ message AuthRoleAddRequest {
 }
 
 message AuthRoleGetRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string role = 1;
 }
 
 message AuthUserListRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
 message AuthRoleListRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 }
 
 message AuthRoleDeleteRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string role = 1;
 }
 
 message AuthRoleGrantPermissionRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   // name is the name of the role which will be granted the permission.
@@ -1294,6 +1382,8 @@ message AuthRoleGrantPermissionRequest {
 }
 
 message AuthRoleRevokePermissionRequest {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   string role = 1;

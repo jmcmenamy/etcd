@@ -17,6 +17,7 @@ package leasing
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -88,6 +89,7 @@ func (lkv *leasingKV) Get(ctx context.Context, key string, opts ...v3.OpOption) 
 }
 
 func (lkv *leasingKV) Put(ctx context.Context, key, val string, opts ...v3.OpOption) (*v3.PutResponse, error) {
+	fmt.Printf("Here in leasing kv gonna send request? %v\n")
 	return lkv.put(ctx, v3.OpPut(key, val, opts...))
 }
 

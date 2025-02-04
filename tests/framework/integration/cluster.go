@@ -572,7 +572,8 @@ type Member struct {
 	// ServerClient is a clientv3 that directly calls the etcdserver.
 	ServerClient *clientv3.Client
 	// Client is a clientv3 that communicates via socket, either UNIX or TCP.
-	Client *clientv3.Client
+	Client             *clientv3.Client
+	ShivizClientLogger *govec.GoLog
 
 	KeepDataDirTerminate     bool
 	ClientMaxCallSendMsgSize int
@@ -920,6 +921,9 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 	if m.DialOptions != nil {
 		cfg.DialOptions = append(cfg.DialOptions, m.DialOptions...)
 	}
+	fmt.Printf("NOW INSIDE THE FUNCTION!!!\n")
+	m.ShivizClientLogger = govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultConfig())
+
 	return newClientV3(cfg)
 }
 
@@ -968,9 +972,9 @@ func (m *Member) Launch() error {
 	)
 	var err error
 	var shouldInit bool
-	if m.ShivizLogger == nil {
+	if m.ShivizServerLogger == nil {
 		shouldInit = true
-		m.ShivizLogger = govec.UninitializedGoVector()
+		m.ShivizServerLogger = govec.UninitializedGoVector()
 	}
 	if m.Server, err = etcdserver.NewServer(m.ServerConfig); err != nil {
 		fmt.Printf("UH OH!!\n")
@@ -979,7 +983,7 @@ func (m *Member) Launch() error {
 	m.Server.SyncTicker = time.NewTicker(500 * time.Millisecond)
 	if shouldInit {
 		fmt.Printf("LOOK HERE MAKING NEW GO VECTOR %v\n", fmt.Sprintf("etcd_server_%v", m.ID()))
-		m.ShivizLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()), govec.GetDefaultConfig())
+		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()), govec.GetDefaultConfig())
 	} else {
 		fmt.Printf("Not making new go vector for %v %v\n", m.ID(), m.Name)
 	}
@@ -1118,6 +1122,7 @@ func (m *Member) Launch() error {
 		m.ServerClosers = append(m.ServerClosers, closer)
 	}
 	if m.GRPCURL != "" && m.Client == nil {
+		fmt.Printf("MAKING A NEW CLIENT!!!\n")
 		m.Client, err = NewClientV3(m)
 		if err != nil {
 			return err

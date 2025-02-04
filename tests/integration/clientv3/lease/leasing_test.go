@@ -455,6 +455,7 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	require.NoError(t, err)
 	defer closeLKV1()
 
+	fmt.Printf("Here in test gonna send request?\n")
 	if _, err = lkv0.Put(context.TODO(), "k", "abc"); err != nil {
 		t.Fatal(err)
 	}
@@ -492,6 +493,8 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	if len(cachedResp.Kvs) != 1 || string(cachedResp.Kvs[0].Value) != "def" {
 		t.Fatalf(`expected "k"->"def", got response %+v`, cachedResp)
 	}
+
+	t.Fatalf("NEED TO FAIL")
 }
 
 func TestLeasingDisconnectedGet(t *testing.T) {

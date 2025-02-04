@@ -420,7 +420,7 @@ func NewServer(cfg config.ServerConfig) (srv *EtcdServer, err error) {
 	// TODO: move transport initialization near the definition of remote
 	tr := &rafthttp.Transport{
 		Logger:       cfg.Logger,
-		ShivizLogger: cfg.ShivizLogger,
+		ShivizLogger: cfg.ShivizServerLogger,
 		TLSInfo:      cfg.PeerTLSInfo,
 		DialTimeout:  cfg.PeerDialTimeout(),
 		ID:           b.cluster.nodeID,

@@ -16,6 +16,7 @@ package clientv3
 
 import (
 	"context"
+	"fmt"
 
 	"google.golang.org/grpc"
 
@@ -115,11 +116,13 @@ func NewKVFromKVClient(remote pb.KVClient, c *Client) KV {
 }
 
 func (kv *kv) Put(ctx context.Context, key, val string, opts ...OpOption) (*PutResponse, error) {
+	fmt.Printf("Sending put request\n")
 	r, err := kv.Do(ctx, OpPut(key, val, opts...))
 	return r.put, ContextError(ctx, err)
 }
 
 func (kv *kv) Get(ctx context.Context, key string, opts ...OpOption) (*GetResponse, error) {
+	fmt.Printf("Sending get request\n")
 	r, err := kv.Do(ctx, OpGet(key, opts...))
 	return r.get, ContextError(ctx, err)
 }

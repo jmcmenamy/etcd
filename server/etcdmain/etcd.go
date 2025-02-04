@@ -42,6 +42,7 @@ var (
 )
 
 func startEtcdOrProxyV2(args []string) {
+	fmt.Printf("START ETCD OR PROXY V2\n")
 	grpc.EnableTracing = false
 
 	cfg := newConfig()

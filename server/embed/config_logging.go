@@ -160,6 +160,7 @@ func (cfg *Config) setupLogging() error {
 			}
 		}
 
+		fmt.Printf("MAKING A NEW LOGGER HERE!!\n")
 		err := cfg.ZapLoggerBuilder(cfg)
 		if err != nil {
 			return err

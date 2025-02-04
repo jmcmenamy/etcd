@@ -178,8 +178,8 @@ type ServerConfig struct {
 	SocketOpts transport.SocketOpts
 
 	// Logger logs server-side operations.
-	Logger       *zap.Logger
-	ShivizLogger *govec.GoLog
+	Logger             *zap.Logger
+	ShivizServerLogger *govec.GoLog
 
 	ForceNewCluster bool
 

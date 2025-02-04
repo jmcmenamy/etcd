@@ -1644,6 +1644,10 @@
     "etcdserverpbAlarmRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "action": {
           "$ref": "#/definitions/AlarmRequestAlarmAction",
           "description": "action is the kind of alarm request to issue. The action\nmay GET alarm statuses, ACTIVATE an alarm, or DEACTIVATE a\nraised alarm."
@@ -1686,7 +1690,13 @@
       "title": "- NONE: default, used to query if any alarm is active\n - NOSPACE: space quota is exhausted\n - CORRUPT: kv store corruption detected"
     },
     "etcdserverpbAuthDisableRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbAuthDisableResponse": {
       "type": "object",
@@ -1697,7 +1707,13 @@
       }
     },
     "etcdserverpbAuthEnableRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbAuthEnableResponse": {
       "type": "object",
@@ -1710,6 +1726,10 @@
     "etcdserverpbAuthRoleAddRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string",
           "description": "name is the name of the role to add to the authentication system."
@@ -1727,6 +1747,10 @@
     "etcdserverpbAuthRoleDeleteRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "role": {
           "type": "string"
         }
@@ -1743,6 +1767,10 @@
     "etcdserverpbAuthRoleGetRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "role": {
           "type": "string"
         }
@@ -1766,6 +1794,10 @@
     "etcdserverpbAuthRoleGrantPermissionRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string",
           "description": "name is the name of the role which will be granted the permission."
@@ -1785,7 +1817,13 @@
       }
     },
     "etcdserverpbAuthRoleListRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbAuthRoleListResponse": {
       "type": "object",
@@ -1804,6 +1842,10 @@
     "etcdserverpbAuthRoleRevokePermissionRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "role": {
           "type": "string"
         },
@@ -1826,7 +1868,13 @@
       }
     },
     "etcdserverpbAuthStatusRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbAuthStatusResponse": {
       "type": "object",
@@ -1847,6 +1895,10 @@
     "etcdserverpbAuthUserAddRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string"
         },
@@ -1872,6 +1924,10 @@
     "etcdserverpbAuthUserChangePasswordRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string",
           "description": "name is the name of the user whose password is being changed."
@@ -1897,6 +1953,10 @@
     "etcdserverpbAuthUserDeleteRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string",
           "description": "name is the name of the user to delete."
@@ -1914,6 +1974,10 @@
     "etcdserverpbAuthUserGetRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string"
         }
@@ -1936,6 +2000,10 @@
     "etcdserverpbAuthUserGrantRoleRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "user": {
           "type": "string",
           "description": "user is the name of the user which should be granted a given role."
@@ -1955,7 +2023,13 @@
       }
     },
     "etcdserverpbAuthUserListRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbAuthUserListResponse": {
       "type": "object",
@@ -1974,6 +2048,10 @@
     "etcdserverpbAuthUserRevokeRoleRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string"
         },
@@ -1993,6 +2071,10 @@
     "etcdserverpbAuthenticateRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "name": {
           "type": "string"
         },
@@ -2016,6 +2098,10 @@
     "etcdserverpbCompactionRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "revision": {
           "type": "string",
           "format": "int64",
@@ -2085,7 +2171,13 @@
       }
     },
     "etcdserverpbDefragmentRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbDefragmentResponse": {
       "type": "object",
@@ -2098,6 +2190,10 @@
     "etcdserverpbDeleteRangeRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "key": {
           "type": "string",
           "format": "byte",
@@ -2138,6 +2234,10 @@
     "etcdserverpbDowngradeRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "action": {
           "$ref": "#/definitions/DowngradeRequestDowngradeAction",
           "description": "action is the kind of downgrade request to issue. The action may\nVALIDATE the target version, DOWNGRADE the cluster version,\nor CANCEL the current downgrading job."
@@ -2163,6 +2263,10 @@
     "etcdserverpbHashKVRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "revision": {
           "type": "string",
           "format": "int64",
@@ -2194,7 +2298,13 @@
       }
     },
     "etcdserverpbHashRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbHashResponse": {
       "type": "object",
@@ -2212,6 +2322,10 @@
     "etcdserverpbLeaseGrantRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "TTL": {
           "type": "string",
           "format": "int64",
@@ -2248,6 +2362,10 @@
     "etcdserverpbLeaseKeepAliveRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "ID": {
           "type": "string",
           "format": "int64",
@@ -2274,7 +2392,13 @@
       }
     },
     "etcdserverpbLeaseLeasesRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbLeaseLeasesResponse": {
       "type": "object",
@@ -2294,6 +2418,10 @@
     "etcdserverpbLeaseRevokeRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "ID": {
           "type": "string",
           "format": "int64",
@@ -2322,6 +2450,10 @@
     "etcdserverpbLeaseTimeToLiveRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "ID": {
           "type": "string",
           "format": "int64",
@@ -2399,6 +2531,10 @@
     "etcdserverpbMemberAddRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "peerURLs": {
           "type": "array",
           "items": {
@@ -2435,6 +2571,10 @@
     "etcdserverpbMemberListRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "linearizable": {
           "type": "boolean"
         }
@@ -2459,6 +2599,10 @@
     "etcdserverpbMemberPromoteRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "ID": {
           "type": "string",
           "format": "uint64",
@@ -2485,6 +2629,10 @@
     "etcdserverpbMemberRemoveRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "ID": {
           "type": "string",
           "format": "uint64",
@@ -2511,6 +2659,10 @@
     "etcdserverpbMemberUpdateRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "ID": {
           "type": "string",
           "format": "uint64",
@@ -2544,6 +2696,10 @@
     "etcdserverpbMoveLeaderRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "targetID": {
           "type": "string",
           "format": "uint64",
@@ -2562,6 +2718,10 @@
     "etcdserverpbPutRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "key": {
           "type": "string",
           "format": "byte",
@@ -2606,6 +2766,10 @@
     "etcdserverpbRangeRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "key": {
           "type": "string",
           "format": "byte",
@@ -2753,7 +2917,13 @@
       }
     },
     "etcdserverpbSnapshotRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbSnapshotResponse": {
       "type": "object",
@@ -2779,7 +2949,13 @@
       }
     },
     "etcdserverpbStatusRequest": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
     },
     "etcdserverpbStatusResponse": {
       "type": "object",
@@ -2846,6 +3022,10 @@
     "etcdserverpbTxnRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "compare": {
           "type": "array",
           "items": {
@@ -2896,6 +3076,10 @@
     "etcdserverpbWatchCancelRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "watch_id": {
           "type": "string",
           "format": "int64",
@@ -2906,6 +3090,10 @@
     "etcdserverpbWatchCreateRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "key": {
           "type": "string",
           "format": "byte",
@@ -2949,11 +3137,21 @@
     },
     "etcdserverpbWatchProgressRequest": {
       "type": "object",
+      "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        }
+      },
       "description": "Requests the a watch stream progress status be sent in the watch response stream as soon as\npossible."
     },
     "etcdserverpbWatchRequest": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "create_request": {
           "$ref": "#/definitions/etcdserverpbWatchCreateRequest"
         },

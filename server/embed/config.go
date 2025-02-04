@@ -1013,6 +1013,7 @@ func (cfg *Config) Validate() error {
 		}
 	}
 
+	fmt.Printf("Validating config HERE!\n")
 	if err := cfg.setupLogging(); err != nil {
 		return err
 	}
