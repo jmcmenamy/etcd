@@ -1666,6 +1666,10 @@
     "etcdserverpbAlarmResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -1701,6 +1705,10 @@
     "etcdserverpbAuthDisableResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1718,6 +1726,10 @@
     "etcdserverpbAuthEnableResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1739,6 +1751,10 @@
     "etcdserverpbAuthRoleAddResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1759,6 +1775,10 @@
     "etcdserverpbAuthRoleDeleteResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1779,6 +1799,10 @@
     "etcdserverpbAuthRoleGetResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -1811,6 +1835,10 @@
     "etcdserverpbAuthRoleGrantPermissionResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1828,6 +1856,10 @@
     "etcdserverpbAuthRoleListResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -1862,6 +1894,10 @@
     "etcdserverpbAuthRoleRevokePermissionResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1879,6 +1915,10 @@
     "etcdserverpbAuthStatusResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -1916,6 +1956,10 @@
     "etcdserverpbAuthUserAddResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1945,6 +1989,10 @@
     "etcdserverpbAuthUserChangePasswordResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1966,6 +2014,10 @@
     "etcdserverpbAuthUserDeleteResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -1986,6 +2038,10 @@
     "etcdserverpbAuthUserGetResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2017,6 +2073,10 @@
     "etcdserverpbAuthUserGrantRoleResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -2034,6 +2094,10 @@
     "etcdserverpbAuthUserListResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2063,6 +2127,10 @@
     "etcdserverpbAuthUserRevokeRoleResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -2086,6 +2154,10 @@
     "etcdserverpbAuthenticateResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2117,6 +2189,10 @@
     "etcdserverpbCompactionResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -2182,6 +2258,10 @@
     "etcdserverpbDefragmentResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -2213,6 +2293,10 @@
     "etcdserverpbDeleteRangeResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2251,6 +2335,10 @@
     "etcdserverpbDowngradeResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2277,6 +2365,10 @@
     "etcdserverpbHashKVResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2309,6 +2401,10 @@
     "etcdserverpbHashResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2341,6 +2437,10 @@
     "etcdserverpbLeaseGrantResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2376,6 +2476,10 @@
     "etcdserverpbLeaseKeepAliveResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2403,6 +2507,10 @@
     "etcdserverpbLeaseLeasesResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2432,6 +2540,10 @@
     "etcdserverpbLeaseRevokeResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -2468,6 +2580,10 @@
     "etcdserverpbLeaseTimeToLiveResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2551,6 +2667,10 @@
     "etcdserverpbMemberAddResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2583,6 +2703,10 @@
     "etcdserverpbMemberListResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2613,6 +2737,10 @@
     "etcdserverpbMemberPromoteResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2643,6 +2771,10 @@
     "etcdserverpbMemberRemoveResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2710,6 +2842,10 @@
     "etcdserverpbMoveLeaderResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         }
@@ -2754,6 +2890,10 @@
     "etcdserverpbPutResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2835,6 +2975,10 @@
     "etcdserverpbRangeResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -2928,6 +3072,10 @@
     "etcdserverpbSnapshotResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader",
           "description": "header has the current key-value store information. The first header in the snapshot\nstream indicates the point in time of the snapshot."
@@ -2960,6 +3108,10 @@
     "etcdserverpbStatusResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -3056,6 +3208,10 @@
     "etcdserverpbTxnResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },
@@ -3166,6 +3322,10 @@
     "etcdserverpbWatchResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },

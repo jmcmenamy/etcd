@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"google.golang.org/grpc"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
@@ -64,6 +65,8 @@ type KV interface {
 
 	// Txn creates a transaction.
 	Txn(ctx context.Context) Txn
+
+	GetShivizLogger() *govec.GoLog
 }
 
 type OpResponse struct {
@@ -95,12 +98,13 @@ func (resp *TxnResponse) OpResponse() OpResponse {
 }
 
 type kv struct {
-	remote   pb.KVClient
-	callOpts []grpc.CallOption
+	remote       pb.KVClient
+	callOpts     []grpc.CallOption
+	ShivizLogger *govec.GoLog
 }
 
 func NewKV(c *Client) KV {
-	api := &kv{remote: RetryKVClient(c)}
+	api := &kv{remote: RetryKVClient(c), ShivizLogger: c.ShivizLogger}
 	if c != nil {
 		api.callOpts = c.callOpts
 	}
@@ -113,6 +117,10 @@ func NewKVFromKVClient(remote pb.KVClient, c *Client) KV {
 		api.callOpts = c.callOpts
 	}
 	return api
+}
+
+func (kv *kv) GetShivizLogger() *govec.GoLog {
+	return kv.ShivizLogger
 }
 
 func (kv *kv) Put(ctx context.Context, key, val string, opts ...OpOption) (*PutResponse, error) {
@@ -152,9 +160,19 @@ func (kv *kv) Do(ctx context.Context, op Op) (OpResponse, error) {
 	var err error
 	switch op.t {
 	case tRange:
+		fmt.Printf("HEY LOOK HERE in client tRange\n")
 		if op.IsSortOptionValid() {
 			var resp *pb.RangeResponse
-			resp, err = kv.remote.Range(ctx, op.toRangeRequest(), kv.callOpts...)
+			rangeRequest := op.toRangeRequest()
+			if kv.ShivizLogger != nil {
+				fmt.Printf("HEY LOOK HERE sending range request\n")
+				rangeRequest.Shivizdata = kv.ShivizLogger.PrepareSend(fmt.Sprintf("client sending range request\n"), 0, govec.GetDefaultLogOptions())
+			}
+			resp, err = kv.remote.Range(ctx, rangeRequest, kv.callOpts...)
+			if resp.Shivizdata != nil {
+				val := 0
+				kv.ShivizLogger.UnpackReceive(fmt.Sprintf("client got range request response\n"), resp.Shivizdata, &val, govec.GetDefaultLogOptions())
+			}
 			if err == nil {
 				return OpResponse{get: (*GetResponse)(resp)}, nil
 			}
@@ -164,19 +182,34 @@ func (kv *kv) Do(ctx context.Context, op Op) (OpResponse, error) {
 	case tPut:
 		var resp *pb.PutResponse
 		r := &pb.PutRequest{Key: op.key, Value: op.val, Lease: int64(op.leaseID), PrevKv: op.prevKV, IgnoreValue: op.ignoreValue, IgnoreLease: op.ignoreLease}
+		if kv.ShivizLogger != nil {
+			fmt.Printf("HEY LOOK HERE sending range request\n")
+			r.Shivizdata = kv.ShivizLogger.PrepareSend(fmt.Sprintf("client sending put request\n"), 0, govec.GetDefaultLogOptions())
+		}
 		resp, err = kv.remote.Put(ctx, r, kv.callOpts...)
 		if err == nil {
+			if kv.ShivizLogger != nil {
+				val := 0
+				kv.ShivizLogger.UnpackReceive(fmt.Sprintf("client received put response\n"), resp.Shivizdata, &val, govec.GetDefaultLogOptions())
+			}
 			return OpResponse{put: (*PutResponse)(resp)}, nil
 		}
 	case tDeleteRange:
 		var resp *pb.DeleteRangeResponse
 		r := &pb.DeleteRangeRequest{Key: op.key, RangeEnd: op.end, PrevKv: op.prevKV}
+		if kv.ShivizLogger != nil {
+			r.Shivizdata = kv.ShivizLogger.PrepareSend(fmt.Sprintf("client sending delete range request\n"), 0, govec.GetDefaultLogOptions())
+		}
 		resp, err = kv.remote.DeleteRange(ctx, r, kv.callOpts...)
 		if err == nil {
 			return OpResponse{del: (*DeleteResponse)(resp)}, nil
 		}
 	case tTxn:
 		var resp *pb.TxnResponse
+		txnRequest := op.toTxnRequest()
+		if kv.ShivizLogger != nil {
+			txnRequest.Shivizdata = kv.ShivizLogger.PrepareSend(fmt.Sprintf("client sending txn request\n"), 0, govec.GetDefaultLogOptions())
+		}
 		resp, err = kv.remote.Txn(ctx, op.toTxnRequest(), kv.callOpts...)
 		if err == nil {
 			return OpResponse{txn: (*TxnResponse)(resp)}, nil

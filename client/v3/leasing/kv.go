@@ -22,6 +22,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -82,6 +83,10 @@ func NewKV(cl *v3.Client, pfx string, opts ...concurrency.SessionOption) (v3.KV,
 func (lkv *leasingKV) Close() {
 	lkv.cancel()
 	lkv.wg.Wait()
+}
+
+func (lkv *leasingKV) GetShivizLogger() *govec.GoLog {
+	return lkv.kv.GetShivizLogger()
 }
 
 func (lkv *leasingKV) Get(ctx context.Context, key string, opts ...v3.OpOption) (*v3.GetResponse, error) {
@@ -266,6 +271,7 @@ func (lkv *leasingKV) acquire(ctx context.Context, key string, op v3.Op) (*v3.Tx
 			return nil, err
 		}
 		lcmp := v3.Cmp{Key: []byte(key), Target: pb.Compare_LEASE}
+		fmt.Printf("HEY LOOK HERE in acquire about to do a txn")
 		resp, err := lkv.kv.Txn(ctx).If(
 			v3.Compare(v3.CreateRevision(lkv.pfx+key), "=", 0),
 			v3.Compare(lcmp, "=", 0)).
@@ -305,6 +311,7 @@ func (lkv *leasingKV) get(ctx context.Context, op v3.Op) (*v3.GetResponse, error
 		return do()
 	}
 
+	// HERE
 	if resp, ok := lkv.leases.Get(ctx, op); resp != nil {
 		return resp, nil
 	} else if !ok || op.IsSerializable() {
@@ -318,6 +325,8 @@ func (lkv *leasingKV) get(ctx context.Context, op v3.Op) (*v3.GetResponse, error
 		return resp.Get(), err
 	}
 
+	// HERE
+	fmt.Printf("HEY LOOK HERE IN leasingKv gonna acquire")
 	resp, err := lkv.acquire(ctx, key, v3.OpGet(key))
 	if err != nil {
 		return nil, err
@@ -325,6 +334,7 @@ func (lkv *leasingKV) get(ctx context.Context, op v3.Op) (*v3.GetResponse, error
 	getResp := (*v3.GetResponse)(resp.Responses[0].GetResponseRange())
 	getResp.Header = resp.Header
 	if resp.Succeeded {
+		// HERE
 		getResp = lkv.leases.Add(key, getResp, op)
 		lkv.wg.Add(1)
 		go func() {

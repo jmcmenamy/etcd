@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/gogo/protobuf/proto"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -103,6 +104,9 @@ type Authenticator interface {
 
 func (s *EtcdServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeResponse, error) {
 	fmt.Printf("Got range request %v\n", s.Config().Name)
+	if r.Shivizdata != nil {
+		s.ShivizLogger.UnpackReceive(fmt.Sprintf("server got range request from client\n"), r.Shivizdata, 0, govec.GetDefaultLogOptions())
+	}
 	trace := traceutil.New("range",
 		s.Logger(),
 		traceutil.Field{Key: "range_begin", Value: string(r.Key)},
@@ -139,11 +143,12 @@ func (s *EtcdServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeRe
 		err = serr
 		return nil, err
 	}
+	resp.Shivizdata = s.ShivizLogger.PrepareSend(fmt.Sprintf("server sending range response to client\n"), 0, govec.GetDefaultLogOptions())
 	return resp, err
 }
 
 func (s *EtcdServer) Put(ctx context.Context, r *pb.PutRequest) (*pb.PutResponse, error) {
-	fmt.Printf("Got put request %v\n", s.Config().Name)
+	fmt.Printf("HEY LOOK HERE Got put request %v\n", s.Config().Name)
 	ctx = context.WithValue(ctx, traceutil.StartTimeKey{}, time.Now())
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{Put: r})
 	if err != nil {
@@ -162,6 +167,10 @@ func (s *EtcdServer) DeleteRange(ctx context.Context, r *pb.DeleteRangeRequest) 
 
 func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse, error) {
 	fmt.Printf("Got a transaction request? %v\n", s.Cfg.Name)
+	if r.Shivizdata != nil {
+		val := 0
+		s.ShivizLogger.UnpackReceive(fmt.Sprintf("server %v got txn request from client\n"), r.Shivizdata, &val, govec.GetDefaultLogOptions())
+	}
 	if txn.IsTxnReadonly(r) {
 		trace := traceutil.New("transaction",
 			s.Logger(),
@@ -192,6 +201,7 @@ func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse
 		if serr := s.doSerialize(ctx, chk, get); serr != nil {
 			return nil, serr
 		}
+		resp.Shivizdata = s.ShivizLogger.PrepareSend(fmt.Sprintf("server sending txn response back to client\n"), 0, govec.GetDefaultLogOptions())
 		return resp, err
 	}
 
@@ -200,7 +210,10 @@ func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.TxnResponse), nil
+	txnResp := resp.(*pb.TxnResponse)
+	txnResp.Shivizdata = s.ShivizLogger.PrepareSend(fmt.Sprintf("server sending txn response back to client\n"), 0, govec.GetDefaultLogOptions())
+
+	return txnResp, nil
 }
 
 func (s *EtcdServer) Compact(ctx context.Context, r *pb.CompactionRequest) (*pb.CompactionResponse, error) {

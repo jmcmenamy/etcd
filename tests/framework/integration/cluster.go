@@ -909,6 +909,7 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 		MaxCallSendMsgSize: m.ClientMaxCallSendMsgSize,
 		MaxCallRecvMsgSize: m.ClientMaxCallRecvMsgSize,
 		Logger:             m.Logger.Named("client"),
+		ShivizLogger:       govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultConfig()),
 	}
 
 	if m.ClientTLSInfo != nil {
@@ -922,9 +923,11 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 		cfg.DialOptions = append(cfg.DialOptions, m.DialOptions...)
 	}
 	fmt.Printf("NOW INSIDE THE FUNCTION!!!\n")
-	m.ShivizClientLogger = govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultConfig())
+	// m.ShivizClientLogger = govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultConfig())
 
-	return newClientV3(cfg)
+	client, err := newClientV3(cfg)
+
+	return client, err
 }
 
 // Clone returns a member with the same server configuration. The returned

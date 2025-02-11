@@ -459,6 +459,7 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	if _, err = lkv0.Put(context.TODO(), "k", "abc"); err != nil {
 		t.Fatal(err)
 	}
+	fmt.Printf("Here in test sent put request?")
 	if _, err = lkv0.Get(context.TODO(), "k"); err != nil {
 		t.Fatal(err)
 	}

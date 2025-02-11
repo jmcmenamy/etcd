@@ -19,6 +19,7 @@ import (
 	"crypto/tls"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
@@ -81,6 +82,8 @@ type Config struct {
 	// Logger sets client-side logger.
 	// If nil, fallback to building LogConfig.
 	Logger *zap.Logger
+
+	ShivizLogger *govec.GoLog
 
 	// LogConfig configures client-side logger.
 	// If nil, use the default logger.

@@ -22,6 +22,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/coreos/go-semver/semver"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -74,8 +75,9 @@ type Client struct {
 
 	callOpts []grpc.CallOption
 
-	lgMu *sync.RWMutex
-	lg   *zap.Logger
+	lgMu         *sync.RWMutex
+	lg           *zap.Logger
+	ShivizLogger *govec.GoLog
 }
 
 // New creates a new etcdv3 client from a given configuration.
@@ -384,14 +386,15 @@ func newClient(cfg *Config) (*Client, error) {
 
 	ctx, cancel := context.WithCancel(baseCtx)
 	client := &Client{
-		conn:     nil,
-		cfg:      *cfg,
-		creds:    creds,
-		ctx:      ctx,
-		cancel:   cancel,
-		epMu:     new(sync.RWMutex),
-		callOpts: defaultCallOpts,
-		lgMu:     new(sync.RWMutex),
+		conn:         nil,
+		cfg:          *cfg,
+		creds:        creds,
+		ctx:          ctx,
+		cancel:       cancel,
+		epMu:         new(sync.RWMutex),
+		callOpts:     defaultCallOpts,
+		lgMu:         new(sync.RWMutex),
+		ShivizLogger: cfg.ShivizLogger,
 	}
 
 	var err error

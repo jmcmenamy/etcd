@@ -5,6 +5,7 @@ go 1.23
 toolchain go1.23.4
 
 require (
+	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd
 	github.com/coreos/go-semver v0.3.1
 	github.com/dustin/go-humanize v1.0.1
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -22,6 +23,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/daviddengcn/go-colortext v1.0.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0 // indirect
@@ -31,6 +33,8 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.61.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.1.4 // indirect
+	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	go.opentelemetry.io/otel/metric v1.33.0 // indirect
 	go.opentelemetry.io/otel/trace v1.33.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
@@ -56,3 +60,5 @@ replace (
 	go.etcd.io/etcd/v3 => ./FORBIDDEN_DEPENDENCY
 	go.etcd.io/tests/v3 => ./FORBIDDEN_DEPENDENCY
 )
+
+replace github.com/DistributedClocks/GoVector => ../../../GoVector

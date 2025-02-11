@@ -29,6 +29,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/coreos/go-semver/semver"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/prometheus/client_golang/prometheus"
@@ -221,8 +222,9 @@ type EtcdServer struct {
 	readych chan struct{}
 	Cfg     config.ServerConfig
 
-	lgMu *sync.RWMutex
-	lg   *zap.Logger
+	lgMu         *sync.RWMutex
+	lg           *zap.Logger
+	ShivizLogger *govec.GoLog
 
 	w wait.Wait
 
@@ -325,6 +327,7 @@ func NewServer(cfg config.ServerConfig) (srv *EtcdServer, err error) {
 		Cfg:                   cfg,
 		lgMu:                  new(sync.RWMutex),
 		lg:                    cfg.Logger,
+		ShivizLogger:          cfg.ShivizServerLogger,
 		errorc:                make(chan error, 1),
 		v2store:               b.storage.st,
 		snapshotter:           b.ss,

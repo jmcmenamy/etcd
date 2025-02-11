@@ -16,8 +16,10 @@ package clientv3
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"google.golang.org/grpc"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
@@ -142,9 +144,20 @@ func (txn *txn) Commit() (*TxnResponse, error) {
 
 	var resp *pb.TxnResponse
 	var err error
+	shivizLogger := txn.kv.GetShivizLogger()
+	if shivizLogger != nil {
+		// val := 0
+		fmt.Printf("HEY LOOK HERE SENDing request in txn")
+		r.Shivizdata = shivizLogger.PrepareSend(fmt.Sprintf("client sending txn request\n"), 0, govec.GetDefaultLogOptions())
+	}
+
 	resp, err = txn.kv.remote.Txn(txn.ctx, r, txn.callOpts...)
 	if err != nil {
 		return nil, ContextError(txn.ctx, err)
+	}
+	if resp.Shivizdata != nil {
+		val := 0
+		shivizLogger.UnpackReceive(fmt.Sprintf("client get txn response\n"), resp.Shivizdata, &val, govec.GetDefaultLogOptions())
 	}
 	return (*TxnResponse)(resp), nil
 }

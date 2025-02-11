@@ -17,6 +17,7 @@ package v3rpc
 
 import (
 	"context"
+	"fmt"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
@@ -39,6 +40,10 @@ func NewKVServer(s *etcdserver.EtcdServer) pb.KVServer {
 }
 
 func (s *kvServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeResponse, error) {
+	// if r.Shivizdata != nil {
+	// 	//
+	// }
+	fmt.Printf("HEY GOT HERE IN key.go\n")
 	if err := checkRangeRequest(r); err != nil {
 		return nil, err
 	}
@@ -81,6 +86,7 @@ func (s *kvServer) DeleteRange(ctx context.Context, r *pb.DeleteRangeRequest) (*
 }
 
 func (s *kvServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse, error) {
+	fmt.Printf("HEY GOT HERE IN key.go for txn\n")
 	if err := checkTxnRequest(r, int(s.maxTxnOps)); err != nil {
 		return nil, err
 	}

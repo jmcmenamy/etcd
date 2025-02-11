@@ -501,6 +501,8 @@ message RangeRequest {
 }
 
 message RangeResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -540,6 +542,8 @@ message PutRequest {
 }
 
 message PutResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -567,6 +571,8 @@ message DeleteRangeRequest {
 }
 
 message DeleteRangeResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -678,6 +684,8 @@ message TxnRequest {
 }
 
 message TxnResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -704,6 +712,8 @@ message CompactionRequest {
 }
 
 message CompactionResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -724,6 +734,8 @@ message HashKVRequest {
 }
 
 message HashKVResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
 
   ResponseHeader header = 1;
@@ -736,6 +748,8 @@ message HashKVResponse {
 }
 
 message HashResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -750,6 +764,8 @@ message SnapshotRequest {
 }
 
 message SnapshotResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
 
   // header has the current key-value store information. The first header in the snapshot
@@ -848,6 +864,8 @@ message WatchProgressRequest {
 }
 
 message WatchResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -896,6 +914,8 @@ message LeaseGrantRequest {
 }
 
 message LeaseGrantResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -916,6 +936,8 @@ message LeaseRevokeRequest {
 }
 
 message LeaseRevokeResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -940,6 +962,8 @@ message LeaseCheckpointRequest {
 }
 
 message LeaseCheckpointResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.4";
 
   ResponseHeader header = 1;
@@ -954,6 +978,8 @@ message LeaseKeepAliveRequest {
 }
 
 message LeaseKeepAliveResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -974,6 +1000,8 @@ message LeaseTimeToLiveRequest {
 }
 
 message LeaseTimeToLiveResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.1";
 
   ResponseHeader header = 1;
@@ -1001,6 +1029,8 @@ message LeaseStatus {
 }
 
 message LeaseLeasesResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
 
   ResponseHeader header = 1;
@@ -1034,6 +1064,8 @@ message MemberAddRequest {
 }
 
 message MemberAddResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1052,6 +1084,8 @@ message MemberRemoveRequest {
 }
 
 message MemberRemoveResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1087,6 +1121,8 @@ message MemberListRequest {
 }
 
 message MemberListResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1103,6 +1139,8 @@ message MemberPromoteRequest {
 }
 
 message MemberPromoteResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.4";
 
   ResponseHeader header = 1;
@@ -1117,6 +1155,8 @@ message DefragmentRequest {
 }
 
 message DefragmentResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1131,6 +1171,8 @@ message MoveLeaderRequest {
 }
 
 message MoveLeaderResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.3";
 
   ResponseHeader header = 1;
@@ -1176,6 +1218,8 @@ message AlarmMember {
 }
 
 message AlarmResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1205,6 +1249,8 @@ message DowngradeRequest {
 }
 
 message DowngradeResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.5";
 
   ResponseHeader header = 1;
@@ -1219,6 +1265,8 @@ message StatusRequest {
 }
 
 message StatusResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1392,18 +1440,24 @@ message AuthRoleRevokePermissionRequest {
 }
 
 message AuthEnableResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthDisableResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthStatusResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.5";
 
   ResponseHeader header = 1;
@@ -1413,6 +1467,8 @@ message AuthStatusResponse {
 }
 
 message AuthenticateResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1421,12 +1477,16 @@ message AuthenticateResponse {
 }
 
 message AuthUserAddResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthUserGetResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1435,42 +1495,56 @@ message AuthUserGetResponse {
 }
 
 message AuthUserDeleteResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthUserChangePasswordResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthUserGrantRoleResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthUserRevokeRoleResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthRoleAddResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthRoleGetResponse {
+  bytes Shivizdata = 1400;
+
   ResponseHeader header = 1 [(versionpb.etcd_version_field)="3.0"];
 
   repeated authpb.Permission perm = 2 [(versionpb.etcd_version_field)="3.0"];
 }
 
 message AuthRoleListResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1479,6 +1553,8 @@ message AuthRoleListResponse {
 }
 
 message AuthUserListResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
@@ -1487,18 +1563,24 @@ message AuthUserListResponse {
 }
 
 message AuthRoleDeleteResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthRoleGrantPermissionResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
 }
 
 message AuthRoleRevokePermissionResponse {
+  bytes Shivizdata = 1400;
+
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
