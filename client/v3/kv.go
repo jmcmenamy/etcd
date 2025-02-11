@@ -65,8 +65,6 @@ type KV interface {
 
 	// Txn creates a transaction.
 	Txn(ctx context.Context) Txn
-
-	GetShivizLogger() *govec.GoLog
 }
 
 type OpResponse struct {
@@ -117,10 +115,6 @@ func NewKVFromKVClient(remote pb.KVClient, c *Client) KV {
 		api.callOpts = c.callOpts
 	}
 	return api
-}
-
-func (kv *kv) GetShivizLogger() *govec.GoLog {
-	return kv.ShivizLogger
 }
 
 func (kv *kv) Put(ctx context.Context, key, val string, opts ...OpOption) (*PutResponse, error) {

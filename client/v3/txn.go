@@ -144,7 +144,7 @@ func (txn *txn) Commit() (*TxnResponse, error) {
 
 	var resp *pb.TxnResponse
 	var err error
-	shivizLogger := txn.kv.GetShivizLogger()
+	shivizLogger := txn.kv.ShivizLogger
 	if shivizLogger != nil {
 		// val := 0
 		fmt.Printf("HEY LOOK HERE SENDing request in txn")

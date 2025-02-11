@@ -22,7 +22,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -83,10 +82,6 @@ func NewKV(cl *v3.Client, pfx string, opts ...concurrency.SessionOption) (v3.KV,
 func (lkv *leasingKV) Close() {
 	lkv.cancel()
 	lkv.wg.Wait()
-}
-
-func (lkv *leasingKV) GetShivizLogger() *govec.GoLog {
-	return lkv.kv.GetShivizLogger()
 }
 
 func (lkv *leasingKV) Get(ctx context.Context, key string, opts ...v3.OpOption) (*v3.GetResponse, error) {
