@@ -413,6 +413,10 @@ func newClient(cfg *Config) (*Client, error) {
 		return nil, err
 	}
 
+	if client.ShivizLogger != nil {
+		client.lg = client.ShivizLogger.WrapBaseZapLogger(client.lg)
+	}
+
 	if cfg.Username != "" && cfg.Password != "" {
 		client.Username = cfg.Username
 		client.Password = cfg.Password

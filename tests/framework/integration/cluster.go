@@ -986,7 +986,7 @@ func (m *Member) Launch() error {
 	m.Server.SyncTicker = time.NewTicker(500 * time.Millisecond)
 	if shouldInit {
 		fmt.Printf("LOOK HERE MAKING NEW GO VECTOR %v\n", fmt.Sprintf("etcd_server_%v", m.ID()))
-		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()), govec.GetDefaultConfig())
+		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), govec.GetDefaultConfig(), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()))
 	} else {
 		fmt.Printf("Not making new go vector for %v %v\n", m.ID(), m.Name)
 	}

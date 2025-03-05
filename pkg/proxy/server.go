@@ -286,6 +286,7 @@ func (s *server) listenAndServe() {
 	defer s.closeWg.Done()
 
 	ctx := context.Background()
+	// fmt.Printf("LISTENING AND SERVING ")
 	s.lg.Info("proxy is listening on", zap.String("from", s.From()))
 	close(s.readyc)
 

@@ -322,11 +322,16 @@ func NewServer(cfg config.ServerConfig) (srv *EtcdServer, err error) {
 	lstats := stats.NewLeaderStats(cfg.Logger, b.cluster.nodeID.String())
 
 	heartbeat := time.Duration(cfg.TickMs) * time.Millisecond
+	lg := cfg.Logger
+	if cfg.ShivizServerLogger != nil {
+		lg = cfg.ShivizServerLogger.WrapBaseZapLogger(lg)
+		lg.Info("WRAPPED THE GIVEN LOGGER")
+	}
 	srv = &EtcdServer{
 		readych:               make(chan struct{}),
 		Cfg:                   cfg,
 		lgMu:                  new(sync.RWMutex),
-		lg:                    cfg.Logger,
+		lg:                    lg,
 		ShivizLogger:          cfg.ShivizServerLogger,
 		errorc:                make(chan error, 1),
 		v2store:               b.storage.st,
@@ -345,6 +350,8 @@ func NewServer(cfg config.ServerConfig) (srv *EtcdServer, err error) {
 		firstCommitInTerm:     notify.NewNotifier(),
 		clusterVersionChanged: notify.NewNotifier(),
 	}
+
+	srv.lg.Info("MADE A NEW SERVER!!", zap.Int16("testing", 0))
 	serverID.With(prometheus.Labels{"server_id": b.cluster.nodeID.String()}).Set(1)
 	srv.cluster.SetVersionChangedNotifier(srv.clusterVersionChanged)
 
