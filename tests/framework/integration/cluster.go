@@ -737,7 +737,6 @@ func MustNewMember(t testutil.TB, mcfg MemberConfig) *Member {
 	m.GRPCServerRecorder = &grpctesting.GRPCRecorder{}
 
 	m.Logger, m.LogObserver = memberLogger(t, mcfg.Name)
-	// m.ShivizLogger = govec.InitGoVector(fmt.Sprintf("etcd_server_%v", m.UniqNumber), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", mcfg.Name), govec.GetDefaultConfig())
 	m.ServerFeatureGate = features.NewDefaultServerFeatureGate(m.Name, m.Logger)
 
 	m.StrictReconfigCheck = !mcfg.DisableStrictReconfigCheck
@@ -909,7 +908,7 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 		MaxCallSendMsgSize: m.ClientMaxCallSendMsgSize,
 		MaxCallRecvMsgSize: m.ClientMaxCallRecvMsgSize,
 		Logger:             m.Logger.Named("client"),
-		ShivizLogger:       govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultConfig()),
+		ShivizLogger:       govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultZapConfig()),
 	}
 
 	if m.ClientTLSInfo != nil {
@@ -923,7 +922,6 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 		cfg.DialOptions = append(cfg.DialOptions, m.DialOptions...)
 	}
 	fmt.Printf("NOW INSIDE THE FUNCTION!!!\n")
-	// m.ShivizClientLogger = govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultConfig())
 
 	client, err := newClientV3(cfg)
 
@@ -986,7 +984,7 @@ func (m *Member) Launch() error {
 	m.Server.SyncTicker = time.NewTicker(500 * time.Millisecond)
 	if shouldInit {
 		fmt.Printf("LOOK HERE MAKING NEW GO VECTOR %v\n", fmt.Sprintf("etcd_server_%v", m.ID()))
-		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), govec.GetDefaultConfig(), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()))
+		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), govec.GetDefaultZapConfig(), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()))
 	} else {
 		fmt.Printf("Not making new go vector for %v %v\n", m.ID(), m.Name)
 	}
