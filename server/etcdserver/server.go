@@ -352,6 +352,7 @@ func NewServer(cfg config.ServerConfig) (srv *EtcdServer, err error) {
 	}
 
 	srv.lg.Info("MADE A NEW SERVER!!", zap.Int16("testing", 0))
+	srv.ShivizLogger.Info("Testing shiviz logging", zap.Int16("testing", 2))
 	serverID.With(prometheus.Labels{"server_id": b.cluster.nodeID.String()}).Set(1)
 	srv.cluster.SetVersionChangedNotifier(srv.clusterVersionChanged)
 

@@ -17,6 +17,7 @@ package lease_test
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"math/rand"
 	"reflect"
@@ -32,6 +33,8 @@ import (
 	"go.etcd.io/etcd/client/v3/leasing"
 	integration2 "go.etcd.io/etcd/tests/v3/framework/integration"
 )
+
+var zapLogPrefix = *flag.String("output_dir", "", "Directory where output files should be written")
 
 func TestLeasingPutGet(t *testing.T) {
 	integration2.BeforeTest(t)
@@ -265,7 +268,7 @@ func TestLeasingGetSerializable(t *testing.T) {
 // TestLeasingPrevKey checks the cache respects WithPrevKV on puts.
 func TestLeasingPrevKey(t *testing.T) {
 	integration2.BeforeTest(t)
-	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 2})
+	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 2, ZapLogPrefix: zapLogPrefix})
 	defer clus.Terminate(t)
 
 	lkv, closeLKV, err := leasing.NewKV(clus.Client(0), "pfx/")

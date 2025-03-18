@@ -176,6 +176,7 @@ type ClusterConfig struct {
 	ExperimentalMaxLearners     int
 	DisableStrictReconfigCheck  bool
 	CorruptCheckTime            time.Duration
+	ZapLogPrefix                string
 }
 
 type Cluster struct {
@@ -293,6 +294,7 @@ func (c *Cluster) mustNewMember(t testutil.TB) *Member {
 			ExperimentalMaxLearners:     c.Cfg.ExperimentalMaxLearners,
 			DisableStrictReconfigCheck:  c.Cfg.DisableStrictReconfigCheck,
 			CorruptCheckTime:            c.Cfg.CorruptCheckTime,
+			ZapLogPrefix:                c.Cfg.ZapLogPrefix,
 		})
 	m.DiscoveryURL = c.Cfg.DiscoveryURL
 	return m
@@ -574,6 +576,7 @@ type Member struct {
 	// Client is a clientv3 that communicates via socket, either UNIX or TCP.
 	Client             *clientv3.Client
 	ShivizClientLogger *govec.GoLog
+	ZapLogPrefix       string
 
 	KeepDataDirTerminate     bool
 	ClientMaxCallSendMsgSize int
@@ -619,6 +622,7 @@ type MemberConfig struct {
 	ExperimentalMaxLearners     int
 	DisableStrictReconfigCheck  bool
 	CorruptCheckTime            time.Duration
+	ZapLogPrefix                string
 }
 
 // MustNewMember return an inited member with the given name. If peerTLS is
@@ -901,6 +905,8 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 		return nil, fmt.Errorf("member not configured for grpc")
 	}
 
+	config := govec.GetDefaultZapConfig()
+	config.ZapLogPrefix = m.ZapLogPrefix
 	cfg := clientv3.Config{
 		Endpoints:          []string{m.GRPCURL},
 		DialTimeout:        5 * time.Second,
@@ -908,7 +914,7 @@ func NewClientV3(m *Member) (*clientv3.Client, error) {
 		MaxCallSendMsgSize: m.ClientMaxCallSendMsgSize,
 		MaxCallRecvMsgSize: m.ClientMaxCallRecvMsgSize,
 		Logger:             m.Logger.Named("client"),
-		ShivizLogger:       govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/client_log_file_%v", m.ID()), govec.GetDefaultZapConfig()),
+		ShivizLogger:       govec.InitGoVector(fmt.Sprintf("etcd_client_%v", m.ID()), fmt.Sprintf("etcd_client_%v", m.ID()), config),
 	}
 
 	if m.ClientTLSInfo != nil {
@@ -984,7 +990,10 @@ func (m *Member) Launch() error {
 	m.Server.SyncTicker = time.NewTicker(500 * time.Millisecond)
 	if shouldInit {
 		fmt.Printf("LOOK HERE MAKING NEW GO VECTOR %v\n", fmt.Sprintf("etcd_server_%v", m.ID()))
-		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), govec.GetDefaultZapConfig(), fmt.Sprintf("/Users/josiahmcmenamy/transferred_files/meng_project/etcd/tests/integration/clientv3/lease/tests/raft_log_file_%v", m.ID()))
+		config := govec.GetDefaultZapConfig()
+		config.ZapLogPrefix = m.ZapLogPrefix
+		m.ShivizServerLogger.InitGoVector(fmt.Sprintf("etcd_server_%v", m.ID()), config, fmt.Sprintf("etcd_server_%v", m.ID()))
+		m.ShivizServerLogger.Info("JUST INITIALIZED SHIVIZ LOGGER", zap.Int16("testing", 4))
 	} else {
 		fmt.Printf("Not making new go vector for %v %v\n", m.ID(), m.Name)
 	}
