@@ -19,7 +19,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"math/rand"
+	"os"
 	"reflect"
 	"sync"
 	"testing"
@@ -34,7 +36,7 @@ import (
 	integration2 "go.etcd.io/etcd/tests/v3/framework/integration"
 )
 
-var zapLogPrefix = *flag.String("output_dir", "", "Directory where output files should be written")
+var zapLogPrefix = flag.String("output_dir", "", "Directory where output files should be written")
 
 func TestLeasingPutGet(t *testing.T) {
 	integration2.BeforeTest(t)
@@ -268,7 +270,7 @@ func TestLeasingGetSerializable(t *testing.T) {
 // TestLeasingPrevKey checks the cache respects WithPrevKV on puts.
 func TestLeasingPrevKey(t *testing.T) {
 	integration2.BeforeTest(t)
-	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 2, ZapLogPrefix: zapLogPrefix})
+	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 2})
 	defer clus.Terminate(t)
 
 	lkv, closeLKV, err := leasing.NewKV(clus.Client(0), "pfx/")
@@ -420,6 +422,11 @@ func TestLeasingConcurrentPut(t *testing.T) {
 }
 
 func TestLeasingGetChecksForExpiration(t *testing.T) {
+	prefix := *zapLogPrefix
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 	integration2.BeforeTest(t)
 
 	ttl := 6
@@ -427,8 +434,9 @@ func TestLeasingGetChecksForExpiration(t *testing.T) {
 	// There's no way to partition a client from the server, so use multiple
 	// servers and shut down a single server to partition the client from the
 	// system.
+	// t.Fatal("ugh")
 	fmt.Println("HEYO GOT HERE 2")
-	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 3, UseBridge: true})
+	clus := integration2.NewCluster(t, &integration2.ClusterConfig{Size: 3, UseBridge: true, ZapLogPrefix: cwd + "/" + prefix})
 	defer clus.Terminate(t)
 	fmt.Printf("HEY GOT HERE\n")
 

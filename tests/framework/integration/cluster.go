@@ -632,6 +632,7 @@ func MustNewMember(t testutil.TB, mcfg MemberConfig) *Member {
 	m := &Member{
 		MemberNumber: mcfg.MemberNumber,
 		UniqNumber:   int(atomic.AddInt32(&UniqueCount, 1)),
+		ZapLogPrefix: mcfg.ZapLogPrefix,
 	}
 
 	peerScheme := SchemeFromTLSInfo(mcfg.PeerTLS)
