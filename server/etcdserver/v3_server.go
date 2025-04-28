@@ -24,9 +24,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/gogo/protobuf/proto"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"golang.org/x/crypto/bcrypt"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
@@ -105,7 +105,7 @@ type Authenticator interface {
 func (s *EtcdServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeResponse, error) {
 	fmt.Printf("Got range request %v\n", s.Config().Name)
 	if r.Shivizdata != nil {
-		s.ShivizLogger.UnpackReceive(fmt.Sprintf("server got range request from client\n"), r.Shivizdata, 0, govec.GetDefaultLogOptions())
+		s.ShivizLogger.UnpackReceiveZap(fmt.Sprintf("server got range request from client\n"), r.Shivizdata, zapcore.InfoLevel)
 	}
 	trace := traceutil.New("range",
 		s.Logger(),
@@ -143,7 +143,7 @@ func (s *EtcdServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeRe
 		err = serr
 		return nil, err
 	}
-	resp.Shivizdata = s.ShivizLogger.PrepareSend(fmt.Sprintf("server sending range response to client\n"), 0, govec.GetDefaultLogOptions())
+	resp.Shivizdata = s.ShivizLogger.PrepareSendZap(fmt.Sprintf("server sending range response to client\n"), zapcore.InfoLevel)
 	return resp, err
 }
 
@@ -168,8 +168,7 @@ func (s *EtcdServer) DeleteRange(ctx context.Context, r *pb.DeleteRangeRequest) 
 func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse, error) {
 	fmt.Printf("Got a transaction request? %v\n", s.Cfg.Name)
 	if r.Shivizdata != nil {
-		val := 0
-		s.ShivizLogger.UnpackReceive(fmt.Sprintf("server %v got txn request from client\n"), r.Shivizdata, &val, govec.GetDefaultLogOptions())
+		s.ShivizLogger.UnpackReceiveZap(fmt.Sprint("server %v got txn request from client\n"), r.Shivizdata, zapcore.InfoLevel)
 	}
 	if txn.IsTxnReadonly(r) {
 		trace := traceutil.New("transaction",
@@ -201,7 +200,7 @@ func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse
 		if serr := s.doSerialize(ctx, chk, get); serr != nil {
 			return nil, serr
 		}
-		resp.Shivizdata = s.ShivizLogger.PrepareSend(fmt.Sprintf("server sending txn response back to client\n"), 0, govec.GetDefaultLogOptions())
+		resp.Shivizdata = s.ShivizLogger.PrepareSendZap(fmt.Sprint("server sending txn response back to client\n"), zapcore.InfoLevel)
 		return resp, err
 	}
 
@@ -211,7 +210,7 @@ func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse
 		return nil, err
 	}
 	txnResp := resp.(*pb.TxnResponse)
-	txnResp.Shivizdata = s.ShivizLogger.PrepareSend(fmt.Sprintf("server sending txn response back to client\n"), 0, govec.GetDefaultLogOptions())
+	txnResp.Shivizdata = s.ShivizLogger.PrepareSendZap(fmt.Sprint("server sending txn response back to client\n"), zapcore.InfoLevel)
 
 	return txnResp, nil
 }

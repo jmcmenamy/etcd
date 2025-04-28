@@ -22,6 +22,7 @@ import (
 
 	"github.com/DistributedClocks/GoVector/govec"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"golang.org/x/time/rate"
 
 	"go.etcd.io/etcd/client/pkg/v3/types"
@@ -179,8 +180,7 @@ func startPeer(t *Transport, urls types.URLs, peerID types.ID, fs *stats.Followe
 		for {
 			select {
 			case mm := <-p.recvc:
-				val := 0
-				p.ShivizLogger.UnpackReceive(fmt.Sprintf("%v received %v from %v\n", mm.To, mm.Type, mm.From), mm.Shivizdata, &val, govec.GetDefaultLogOptions())
+				p.ShivizLogger.UnpackReceiveZap(fmt.Sprintf("%v received %v from %v\n", mm.To, mm.Type, mm.From), mm.Shivizdata, zapcore.InfoLevel)
 				if err := r.Process(ctx, mm); err != nil {
 					if t.Logger != nil {
 						t.Logger.Warn("failed to process Raft message", zap.Error(err))
@@ -248,7 +248,7 @@ func (p *peer) send(m raftpb.Message) {
 		return
 	}
 
-	m.Shivizdata = p.ShivizLogger.PrepareSend(fmt.Sprintf("%v sending %v to %v\n", m.From, m.Type, m.To), 0, govec.GetDefaultLogOptions())
+	m.Shivizdata = p.ShivizLogger.PrepareSendZap(fmt.Sprintf("%v sending %v to %v\n", m.From, m.Type, m.To), zapcore.InfoLevel)
 	writec, name := p.pick(m)
 	select {
 	case writec <- m:

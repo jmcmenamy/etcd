@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/DistributedClocks/GoVector/govec"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
@@ -148,7 +148,7 @@ func (txn *txn) Commit() (*TxnResponse, error) {
 	if shivizLogger != nil {
 		// val := 0
 		fmt.Printf("HEY LOOK HERE SENDing request in txn")
-		r.Shivizdata = shivizLogger.PrepareSend(fmt.Sprintf("client sending txn request\n"), 0, govec.GetDefaultLogOptions())
+		r.Shivizdata = shivizLogger.PrepareSendZap(fmt.Sprint("client sending txn request\n"), zapcore.InfoLevel)
 	}
 
 	resp, err = txn.kv.remote.Txn(txn.ctx, r, txn.callOpts...)
@@ -156,8 +156,7 @@ func (txn *txn) Commit() (*TxnResponse, error) {
 		return nil, ContextError(txn.ctx, err)
 	}
 	if resp.Shivizdata != nil {
-		val := 0
-		shivizLogger.UnpackReceive(fmt.Sprintf("client get txn response\n"), resp.Shivizdata, &val, govec.GetDefaultLogOptions())
+		shivizLogger.UnpackReceiveZap(fmt.Sprint("client get txn response\n"), resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return (*TxnResponse)(resp), nil
 }
