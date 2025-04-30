@@ -324,7 +324,7 @@ func NewServer(cfg config.ServerConfig) (srv *EtcdServer, err error) {
 	heartbeat := time.Duration(cfg.TickMs) * time.Millisecond
 	lg := cfg.Logger
 	if cfg.ShivizServerLogger != nil {
-		lg = cfg.ShivizServerLogger.WrapBaseZapLogger(lg)
+		lg = cfg.ShivizServerLogger.WrapBaseZapLogger(lg, zap.AddCaller(), zap.AddStacktrace(lg.Level()))
 		lg.Info("WRAPPED THE GIVEN LOGGER")
 	}
 	srv = &EtcdServer{

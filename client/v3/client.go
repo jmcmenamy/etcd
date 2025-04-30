@@ -414,7 +414,7 @@ func newClient(cfg *Config) (*Client, error) {
 	}
 
 	if client.ShivizLogger != nil {
-		client.lg = client.ShivizLogger.WrapBaseZapLogger(client.lg)
+		client.lg = client.ShivizLogger.WrapBaseZapLogger(client.lg, zap.AddCaller(), zap.AddStacktrace(client.lg.Level()))
 	}
 
 	if cfg.Username != "" && cfg.Password != "" {
