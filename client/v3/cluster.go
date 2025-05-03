@@ -17,6 +17,8 @@ package clientv3
 import (
 	"context"
 
+	"github.com/DistributedClocks/GoVector/govec"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
@@ -53,12 +55,13 @@ type Cluster interface {
 }
 
 type cluster struct {
-	remote   pb.ClusterClient
-	callOpts []grpc.CallOption
+	remote       pb.ClusterClient
+	callOpts     []grpc.CallOption
+	ShivizLogger *govec.GoLog
 }
 
 func NewCluster(c *Client) Cluster {
-	api := &cluster{remote: RetryClusterClient(c)}
+	api := &cluster{remote: RetryClusterClient(c), ShivizLogger: c.ShivizLogger}
 	if c != nil {
 		api.callOpts = c.callOpts
 	}
@@ -91,18 +94,26 @@ func (c *cluster) memberAdd(ctx context.Context, peerAddrs []string, isLearner b
 		PeerURLs:  peerAddrs,
 		IsLearner: isLearner,
 	}
+	r.Shivizdata = c.ShivizLogger.PrepareSendZap("client sending member add request", zapcore.InfoLevel)
 	resp, err := c.remote.MemberAdd(ctx, r, c.callOpts...)
 	if err != nil {
 		return nil, ContextError(ctx, err)
+	}
+	if resp.Shivizdata != nil {
+		c.ShivizLogger.UnpackReceiveZap("client got member add request response", resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return (*MemberAddResponse)(resp), nil
 }
 
 func (c *cluster) MemberRemove(ctx context.Context, id uint64) (*MemberRemoveResponse, error) {
 	r := &pb.MemberRemoveRequest{ID: id}
+	r.Shivizdata = c.ShivizLogger.PrepareSendZap("client sending member remove request", zapcore.InfoLevel)
 	resp, err := c.remote.MemberRemove(ctx, r, c.callOpts...)
 	if err != nil {
 		return nil, ContextError(ctx, err)
+	}
+	if resp.Shivizdata != nil {
+		c.ShivizLogger.UnpackReceiveZap("client got member remove request response", resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return (*MemberRemoveResponse)(resp), nil
 }
@@ -115,27 +126,37 @@ func (c *cluster) MemberUpdate(ctx context.Context, id uint64, peerAddrs []strin
 
 	// it is safe to retry on update.
 	r := &pb.MemberUpdateRequest{ID: id, PeerURLs: peerAddrs}
+	r.Shivizdata = c.ShivizLogger.PrepareSendZap("client sending member update request", zapcore.InfoLevel)
 	resp, err := c.remote.MemberUpdate(ctx, r, c.callOpts...)
 	if err == nil {
 		return (*MemberUpdateResponse)(resp), nil
+	}
+	if resp.Shivizdata != nil {
+		c.ShivizLogger.UnpackReceiveZap("client got member update request response", resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return nil, ContextError(ctx, err)
 }
 
 func (c *cluster) MemberList(ctx context.Context, opts ...OpOption) (*MemberListResponse, error) {
 	opt := OpGet("", opts...)
-	resp, err := c.remote.MemberList(ctx, &pb.MemberListRequest{Linearizable: !opt.serializable}, c.callOpts...)
+	resp, err := c.remote.MemberList(ctx, &pb.MemberListRequest{Linearizable: !opt.serializable, Shivizdata: c.ShivizLogger.PrepareSendZap("client sending member list request", zapcore.InfoLevel)}, c.callOpts...)
 	if err == nil {
 		return (*MemberListResponse)(resp), nil
+	}
+	if resp.Shivizdata != nil {
+		c.ShivizLogger.UnpackReceiveZap("client got member list request response", resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return nil, ContextError(ctx, err)
 }
 
 func (c *cluster) MemberPromote(ctx context.Context, id uint64) (*MemberPromoteResponse, error) {
-	r := &pb.MemberPromoteRequest{ID: id}
+	r := &pb.MemberPromoteRequest{ID: id, Shivizdata: c.ShivizLogger.PrepareSendZap("client sending member promote request", zapcore.InfoLevel)}
 	resp, err := c.remote.MemberPromote(ctx, r, c.callOpts...)
 	if err != nil {
 		return nil, ContextError(ctx, err)
+	}
+	if resp.Shivizdata != nil {
+		c.ShivizLogger.UnpackReceiveZap("client got member promote request response", resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return (*MemberPromoteResponse)(resp), nil
 }

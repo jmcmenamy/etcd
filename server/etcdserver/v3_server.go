@@ -103,10 +103,10 @@ type Authenticator interface {
 }
 
 func (s *EtcdServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeResponse, error) {
-	fmt.Printf("Got range request %v\n", s.Config().Name)
-	if r.Shivizdata != nil {
-		s.ShivizLogger.UnpackReceiveZap(fmt.Sprintf("server got range request from client\n"), r.Shivizdata, zapcore.InfoLevel)
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got RangeRequest", r.Shivizdata, zapcore.InfoLevel)
 	}
+	fmt.Printf("Got range request %v\n", s.Config().Name)
 	trace := traceutil.New("range",
 		s.Logger(),
 		traceutil.Field{Key: "range_begin", Value: string(r.Key)},
@@ -143,32 +143,47 @@ func (s *EtcdServer) Range(ctx context.Context, r *pb.RangeRequest) (*pb.RangeRe
 		err = serr
 		return nil, err
 	}
-	resp.Shivizdata = s.ShivizLogger.PrepareSendZap(fmt.Sprintf("server sending range response to client\n"), zapcore.InfoLevel)
+	resp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending RangeRequest response", zapcore.InfoLevel)
 	return resp, err
 }
 
 func (s *EtcdServer) Put(ctx context.Context, r *pb.PutRequest) (*pb.PutResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got PutRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	fmt.Printf("HEY LOOK HERE Got put request %v\n", s.Config().Name)
 	ctx = context.WithValue(ctx, traceutil.StartTimeKey{}, time.Now())
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{Put: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.PutResponse), nil
+	respp := resp.(*pb.PutResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending PutRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) DeleteRange(ctx context.Context, r *pb.DeleteRangeRequest) (*pb.DeleteRangeResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got DeleteRangeRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{DeleteRange: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.DeleteRangeResponse), nil
+	respp := resp.(*pb.DeleteRangeResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending DeleteRangeRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got TxnRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	fmt.Printf("Got a transaction request? %v\n", s.Cfg.Name)
 	if r.Shivizdata != nil {
-		s.ShivizLogger.UnpackReceiveZap(fmt.Sprint("server %v got txn request from client\n"), r.Shivizdata, zapcore.InfoLevel)
+		if r != nil {
+			s.ShivizLogger.UnpackReceiveZap(fmt.Sprint("server %v got txn request from client\n"), r.Shivizdata, zapcore.InfoLevel)
+		}
 	}
 	if txn.IsTxnReadonly(r) {
 		trace := traceutil.New("transaction",
@@ -200,7 +215,7 @@ func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse
 		if serr := s.doSerialize(ctx, chk, get); serr != nil {
 			return nil, serr
 		}
-		resp.Shivizdata = s.ShivizLogger.PrepareSendZap(fmt.Sprint("server sending txn response back to client\n"), zapcore.InfoLevel)
+		resp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending TxnRequest response", zapcore.InfoLevel)
 		return resp, err
 	}
 
@@ -216,6 +231,9 @@ func (s *EtcdServer) Txn(ctx context.Context, r *pb.TxnRequest) (*pb.TxnResponse
 }
 
 func (s *EtcdServer) Compact(ctx context.Context, r *pb.CompactionRequest) (*pb.CompactionResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got CompactionRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	startTime := time.Now()
 	result, err := s.processInternalRaftRequestOnce(ctx, pb.InternalRaftRequest{Compaction: r})
 	trace := traceutil.TODO()
@@ -257,10 +275,14 @@ func (s *EtcdServer) Compact(ctx context.Context, r *pb.CompactionRequest) (*pb.
 	}
 	resp.Header.Revision = s.kv.Rev()
 	trace.AddField(traceutil.Field{Key: "response_revision", Value: resp.Header.Revision})
+	resp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending CompactionRequest response", zapcore.InfoLevel)
 	return resp, nil
 }
 
 func (s *EtcdServer) LeaseGrant(ctx context.Context, r *pb.LeaseGrantRequest) (*pb.LeaseGrantResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got LeaseGrantRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	// no id given? choose one
 	for r.ID == int64(lease.NoLease) {
 		// only use positive int64 id's
@@ -270,7 +292,9 @@ func (s *EtcdServer) LeaseGrant(ctx context.Context, r *pb.LeaseGrantRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.LeaseGrantResponse), nil
+	respp := resp.(*pb.LeaseGrantResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending LeaseGrantRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) waitAppliedIndex() error {
@@ -286,11 +310,16 @@ func (s *EtcdServer) waitAppliedIndex() error {
 }
 
 func (s *EtcdServer) LeaseRevoke(ctx context.Context, r *pb.LeaseRevokeRequest) (*pb.LeaseRevokeResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got LeaseRevokeRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequestOnce(ctx, pb.InternalRaftRequest{LeaseRevoke: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.LeaseRevokeResponse), nil
+	respp := resp.(*pb.LeaseRevokeResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending LeaseRevokeRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) LeaseRenew(ctx context.Context, id lease.LeaseID) (int64, error) {
@@ -370,6 +399,9 @@ func (s *EtcdServer) checkLeaseTimeToLive(ctx context.Context, leaseID lease.Lea
 }
 
 func (s *EtcdServer) leaseTimeToLive(ctx context.Context, r *pb.LeaseTimeToLiveRequest) (*pb.LeaseTimeToLiveResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got LeaseTimeToLiveRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	if s.isLeader() {
 		if err := s.waitAppliedIndex(); err != nil {
 			return nil, err
@@ -401,6 +433,7 @@ func (s *EtcdServer) leaseTimeToLive(ctx context.Context, r *pb.LeaseTimeToLiveR
 			// client. Instead, uses ErrLeaderChanged.
 			return nil, errors.ErrLeaderChanged
 		}
+		resp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending LeaseTimeToLiveRequest response", zapcore.InfoLevel)
 		return resp, nil
 	}
 
@@ -432,6 +465,9 @@ func (s *EtcdServer) leaseTimeToLive(ctx context.Context, r *pb.LeaseTimeToLiveR
 }
 
 func (s *EtcdServer) LeaseTimeToLive(ctx context.Context, r *pb.LeaseTimeToLiveRequest) (*pb.LeaseTimeToLiveResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got LeaseTimeToLiveRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	var rev uint64
 	var err error
 	if r.Keys {
@@ -452,6 +488,7 @@ func (s *EtcdServer) LeaseTimeToLive(ctx context.Context, r *pb.LeaseTimeToLiveR
 			return nil, auth.ErrAuthOldRevision
 		}
 	}
+	resp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending LeaseTimeToLiveRequest response", zapcore.InfoLevel)
 	return resp, nil
 }
 
@@ -465,7 +502,10 @@ func (s *EtcdServer) newHeader() *pb.ResponseHeader {
 }
 
 // LeaseLeases is really ListLeases !???
-func (s *EtcdServer) LeaseLeases(_ context.Context, _ *pb.LeaseLeasesRequest) (*pb.LeaseLeasesResponse, error) {
+func (s *EtcdServer) LeaseLeases(_ context.Context, r *pb.LeaseLeasesRequest) (*pb.LeaseLeasesResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got LeaseLeasesRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	ls := s.lessor.Leases()
 	lss := make([]*pb.LeaseStatus, len(ls))
 	for i := range ls {
@@ -495,38 +535,61 @@ func (s *EtcdServer) waitLeader(ctx context.Context) (*membership.Member, error)
 }
 
 func (s *EtcdServer) Alarm(ctx context.Context, r *pb.AlarmRequest) (*pb.AlarmResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AlarmRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequestOnce(ctx, pb.InternalRaftRequest{Alarm: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AlarmResponse), nil
+	respp := resp.(*pb.AlarmResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AlarmRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) AuthEnable(ctx context.Context, r *pb.AuthEnableRequest) (*pb.AuthEnableResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthEnableRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequestOnce(ctx, pb.InternalRaftRequest{AuthEnable: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthEnableResponse), nil
+	respp := resp.(*pb.AuthEnableResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthEnableRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) AuthDisable(ctx context.Context, r *pb.AuthDisableRequest) (*pb.AuthDisableResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthDisableRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthDisable: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthDisableResponse), nil
+	respp := resp.(*pb.AuthDisableResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthDisableRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) AuthStatus(ctx context.Context, r *pb.AuthStatusRequest) (*pb.AuthStatusResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthStatusRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthStatus: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthStatusResponse), nil
+	respp := resp.(*pb.AuthStatusResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthStatusRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) Authenticate(ctx context.Context, r *pb.AuthenticateRequest) (*pb.AuthenticateResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthenticateRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	if err := s.linearizableReadNotify(ctx); err != nil {
 		return nil, err
 	}
@@ -577,10 +640,15 @@ func (s *EtcdServer) Authenticate(ctx context.Context, r *pb.AuthenticateRequest
 		lg.Info("revision when password checked became stale; retrying")
 	}
 
-	return resp.(*pb.AuthenticateResponse), nil
+	respp := resp.(*pb.AuthenticateResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthenticateRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserAdd(ctx context.Context, r *pb.AuthUserAddRequest) (*pb.AuthUserAddResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserAddRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	if r.Options == nil || !r.Options.NoPassword {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(r.Password), s.authStore.BcryptCost())
 		if err != nil {
@@ -594,18 +662,28 @@ func (s *EtcdServer) UserAdd(ctx context.Context, r *pb.AuthUserAddRequest) (*pb
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserAddResponse), nil
+	respp := resp.(*pb.AuthUserAddResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserAddRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserDelete(ctx context.Context, r *pb.AuthUserDeleteRequest) (*pb.AuthUserDeleteResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserDeleteRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthUserDelete: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserDeleteResponse), nil
+	respp := resp.(*pb.AuthUserDeleteResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserDeleteRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserChangePassword(ctx context.Context, r *pb.AuthUserChangePasswordRequest) (*pb.AuthUserChangePasswordResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserChangePasswordRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	if r.Password != "" {
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(r.Password), s.authStore.BcryptCost())
 		if err != nil {
@@ -619,87 +697,139 @@ func (s *EtcdServer) UserChangePassword(ctx context.Context, r *pb.AuthUserChang
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserChangePasswordResponse), nil
+	respp := resp.(*pb.AuthUserChangePasswordResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserChangePasswordRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserGrantRole(ctx context.Context, r *pb.AuthUserGrantRoleRequest) (*pb.AuthUserGrantRoleResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserGrantRoleRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthUserGrantRole: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserGrantRoleResponse), nil
+	respp := resp.(*pb.AuthUserGrantRoleResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserGrantRoleRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserGet(ctx context.Context, r *pb.AuthUserGetRequest) (*pb.AuthUserGetResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserGetRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthUserGet: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserGetResponse), nil
+	respp := resp.(*pb.AuthUserGetResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserGetRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserList(ctx context.Context, r *pb.AuthUserListRequest) (*pb.AuthUserListResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserListRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthUserList: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserListResponse), nil
+	respp := resp.(*pb.AuthUserListResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserListRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) UserRevokeRole(ctx context.Context, r *pb.AuthUserRevokeRoleRequest) (*pb.AuthUserRevokeRoleResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthUserRevokeRoleRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthUserRevokeRole: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthUserRevokeRoleResponse), nil
+	respp := resp.(*pb.AuthUserRevokeRoleResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthUserRevokeRoleRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) RoleAdd(ctx context.Context, r *pb.AuthRoleAddRequest) (*pb.AuthRoleAddResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthRoleAddRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthRoleAdd: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthRoleAddResponse), nil
+	respp := resp.(*pb.AuthRoleAddResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthRoleAddRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) RoleGrantPermission(ctx context.Context, r *pb.AuthRoleGrantPermissionRequest) (*pb.AuthRoleGrantPermissionResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthRoleGrantPermissionRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthRoleGrantPermission: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthRoleGrantPermissionResponse), nil
+	respp := resp.(*pb.AuthRoleGrantPermissionResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthRoleGrantPermissionRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) RoleGet(ctx context.Context, r *pb.AuthRoleGetRequest) (*pb.AuthRoleGetResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthRoleGetRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthRoleGet: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthRoleGetResponse), nil
+	respp := resp.(*pb.AuthRoleGetResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthRoleGetRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) RoleList(ctx context.Context, r *pb.AuthRoleListRequest) (*pb.AuthRoleListResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthRoleListRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthRoleList: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthRoleListResponse), nil
+	respp := resp.(*pb.AuthRoleListResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthRoleListRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) RoleRevokePermission(ctx context.Context, r *pb.AuthRoleRevokePermissionRequest) (*pb.AuthRoleRevokePermissionResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthRoleRevokePermissionRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthRoleRevokePermission: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthRoleRevokePermissionResponse), nil
+	respp := resp.(*pb.AuthRoleRevokePermissionResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthRoleRevokePermissionRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) RoleDelete(ctx context.Context, r *pb.AuthRoleDeleteRequest) (*pb.AuthRoleDeleteResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got AuthRoleDeleteRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	resp, err := s.raftRequest(ctx, pb.InternalRaftRequest{AuthRoleDelete: r})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*pb.AuthRoleDeleteResponse), nil
+	respp := resp.(*pb.AuthRoleDeleteResponse)
+	respp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending AuthRoleDeleteRequest response", zapcore.InfoLevel)
+	return respp, nil
 }
 
 func (s *EtcdServer) raftRequestOnce(ctx context.Context, r pb.InternalRaftRequest) (proto.Message, error) {
@@ -1011,6 +1141,9 @@ func (s *EtcdServer) AuthInfoFromCtx(ctx context.Context) (*auth.AuthInfo, error
 }
 
 func (s *EtcdServer) Downgrade(ctx context.Context, r *pb.DowngradeRequest) (*pb.DowngradeResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got DowngradeRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	switch r.Action {
 	case pb.DowngradeRequest_VALIDATE:
 		return s.downgradeValidate(ctx, r.Version)
@@ -1041,10 +1174,14 @@ func (s *EtcdServer) downgradeValidate(ctx context.Context, v string) (*pb.Downg
 		return nil, err
 	}
 
+	resp.Shivizdata = s.ShivizLogger.PrepareSendZap("server sending DowngradeRequest response", zapcore.InfoLevel)
 	return resp, nil
 }
 
 func (s *EtcdServer) downgradeEnable(ctx context.Context, r *pb.DowngradeRequest) (*pb.DowngradeResponse, error) {
+	if r != nil {
+		s.ShivizLogger.UnpackReceiveZap("server got DowngradeRequest", r.Shivizdata, zapcore.InfoLevel)
+	}
 	lg := s.Logger()
 	targetVersion, err := convertToClusterVersion(r.Version)
 	if err != nil {

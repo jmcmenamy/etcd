@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/DistributedClocks/GoVector/govec"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 
 	"go.etcd.io/etcd/api/v3/authpb"
@@ -113,12 +115,13 @@ type Auth interface {
 }
 
 type authClient struct {
-	remote   pb.AuthClient
-	callOpts []grpc.CallOption
+	remote       pb.AuthClient
+	callOpts     []grpc.CallOption
+	ShivizLogger *govec.GoLog
 }
 
 func NewAuth(c *Client) Auth {
-	api := &authClient{remote: RetryAuthClient(c)}
+	api := &authClient{remote: RetryAuthClient(c), ShivizLogger: c.ShivizLogger}
 	if c != nil {
 		api.callOpts = c.callOpts
 	}
@@ -134,67 +137,106 @@ func NewAuthFromAuthClient(remote pb.AuthClient, c *Client) Auth {
 }
 
 func (auth *authClient) Authenticate(ctx context.Context, name string, password string) (*AuthenticateResponse, error) {
-	resp, err := auth.remote.Authenticate(ctx, &pb.AuthenticateRequest{Name: name, Password: password}, auth.callOpts...)
+	resp, err := auth.remote.Authenticate(ctx, &pb.AuthenticateRequest{Name: name, Password: password, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthenticateRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthenticateRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthenticateResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) AuthEnable(ctx context.Context) (*AuthEnableResponse, error) {
-	resp, err := auth.remote.AuthEnable(ctx, &pb.AuthEnableRequest{}, auth.callOpts...)
+	resp, err := auth.remote.AuthEnable(ctx, &pb.AuthEnableRequest{Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthEnableRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthEnableRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthEnableResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) AuthDisable(ctx context.Context) (*AuthDisableResponse, error) {
-	resp, err := auth.remote.AuthDisable(ctx, &pb.AuthDisableRequest{}, auth.callOpts...)
+	resp, err := auth.remote.AuthDisable(ctx, &pb.AuthDisableRequest{Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthDisableRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthDisableRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthDisableResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) AuthStatus(ctx context.Context) (*AuthStatusResponse, error) {
-	resp, err := auth.remote.AuthStatus(ctx, &pb.AuthStatusRequest{}, auth.callOpts...)
+	resp, err := auth.remote.AuthStatus(ctx, &pb.AuthStatusRequest{Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthStatusRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthStatusRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthStatusResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserAdd(ctx context.Context, name string, password string) (*AuthUserAddResponse, error) {
-	resp, err := auth.remote.UserAdd(ctx, &pb.AuthUserAddRequest{Name: name, Password: password, Options: &authpb.UserAddOptions{NoPassword: false}}, auth.callOpts...)
+	resp, err := auth.remote.UserAdd(ctx, &pb.AuthUserAddRequest{Name: name, Password: password, Options: &authpb.UserAddOptions{NoPassword: false}, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserAddRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserAddRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserAddResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserAddWithOptions(ctx context.Context, name string, password string, options *UserAddOptions) (*AuthUserAddResponse, error) {
-	resp, err := auth.remote.UserAdd(ctx, &pb.AuthUserAddRequest{Name: name, Password: password, Options: (*authpb.UserAddOptions)(options)}, auth.callOpts...)
+	resp, err := auth.remote.UserAdd(ctx, &pb.AuthUserAddRequest{Name: name, Password: password, Options: (*authpb.UserAddOptions)(options), Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserAddRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserAddRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserAddResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserDelete(ctx context.Context, name string) (*AuthUserDeleteResponse, error) {
-	resp, err := auth.remote.UserDelete(ctx, &pb.AuthUserDeleteRequest{Name: name}, auth.callOpts...)
+	resp, err := auth.remote.UserDelete(ctx, &pb.AuthUserDeleteRequest{Name: name, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserDeleteRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserDeleteRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserDeleteResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserChangePassword(ctx context.Context, name string, password string) (*AuthUserChangePasswordResponse, error) {
-	resp, err := auth.remote.UserChangePassword(ctx, &pb.AuthUserChangePasswordRequest{Name: name, Password: password}, auth.callOpts...)
+	resp, err := auth.remote.UserChangePassword(ctx, &pb.AuthUserChangePasswordRequest{Name: name, Password: password, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserChangePasswordRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserChangePasswordRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserChangePasswordResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserGrantRole(ctx context.Context, user string, role string) (*AuthUserGrantRoleResponse, error) {
-	resp, err := auth.remote.UserGrantRole(ctx, &pb.AuthUserGrantRoleRequest{User: user, Role: role}, auth.callOpts...)
+	resp, err := auth.remote.UserGrantRole(ctx, &pb.AuthUserGrantRoleRequest{User: user, Role: role, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserGrantRoleRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserGrantRoleRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserGrantRoleResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserGet(ctx context.Context, name string) (*AuthUserGetResponse, error) {
-	resp, err := auth.remote.UserGet(ctx, &pb.AuthUserGetRequest{Name: name}, auth.callOpts...)
+	resp, err := auth.remote.UserGet(ctx, &pb.AuthUserGetRequest{Name: name, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserGetRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserGetRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserGetResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserList(ctx context.Context) (*AuthUserListResponse, error) {
-	resp, err := auth.remote.UserList(ctx, &pb.AuthUserListRequest{}, auth.callOpts...)
+	resp, err := auth.remote.UserList(ctx, &pb.AuthUserListRequest{Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserListRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserListRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserListResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) UserRevokeRole(ctx context.Context, name string, role string) (*AuthUserRevokeRoleResponse, error) {
-	resp, err := auth.remote.UserRevokeRole(ctx, &pb.AuthUserRevokeRoleRequest{Name: name, Role: role}, auth.callOpts...)
+	resp, err := auth.remote.UserRevokeRole(ctx, &pb.AuthUserRevokeRoleRequest{Name: name, Role: role, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthUserRevokeRoleRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthUserRevokeRoleRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthUserRevokeRoleResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) RoleAdd(ctx context.Context, name string) (*AuthRoleAddResponse, error) {
-	resp, err := auth.remote.RoleAdd(ctx, &pb.AuthRoleAddRequest{Name: name}, auth.callOpts...)
+	resp, err := auth.remote.RoleAdd(ctx, &pb.AuthRoleAddRequest{Name: name, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthRoleAddRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthRoleAddRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthRoleAddResponse)(resp), ContextError(ctx, err)
 }
 
@@ -204,27 +246,42 @@ func (auth *authClient) RoleGrantPermission(ctx context.Context, name string, ke
 		RangeEnd: []byte(rangeEnd),
 		PermType: authpb.Permission_Type(permType),
 	}
-	resp, err := auth.remote.RoleGrantPermission(ctx, &pb.AuthRoleGrantPermissionRequest{Name: name, Perm: perm}, auth.callOpts...)
+	resp, err := auth.remote.RoleGrantPermission(ctx, &pb.AuthRoleGrantPermissionRequest{Name: name, Perm: perm, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthRoleGrantPermissionRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthRoleGrantPermissionRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthRoleGrantPermissionResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) RoleGet(ctx context.Context, role string) (*AuthRoleGetResponse, error) {
-	resp, err := auth.remote.RoleGet(ctx, &pb.AuthRoleGetRequest{Role: role}, auth.callOpts...)
+	resp, err := auth.remote.RoleGet(ctx, &pb.AuthRoleGetRequest{Role: role, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthRoleGetRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthRoleGetRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthRoleGetResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) RoleList(ctx context.Context) (*AuthRoleListResponse, error) {
-	resp, err := auth.remote.RoleList(ctx, &pb.AuthRoleListRequest{}, auth.callOpts...)
+	resp, err := auth.remote.RoleList(ctx, &pb.AuthRoleListRequest{Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthRoleListRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthRoleListRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthRoleListResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) RoleRevokePermission(ctx context.Context, role string, key, rangeEnd string) (*AuthRoleRevokePermissionResponse, error) {
-	resp, err := auth.remote.RoleRevokePermission(ctx, &pb.AuthRoleRevokePermissionRequest{Role: role, Key: []byte(key), RangeEnd: []byte(rangeEnd)}, auth.callOpts...)
+	resp, err := auth.remote.RoleRevokePermission(ctx, &pb.AuthRoleRevokePermissionRequest{Role: role, Key: []byte(key), RangeEnd: []byte(rangeEnd), Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthRoleRevokePermissionRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthRoleRevokePermissionRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthRoleRevokePermissionResponse)(resp), ContextError(ctx, err)
 }
 
 func (auth *authClient) RoleDelete(ctx context.Context, role string) (*AuthRoleDeleteResponse, error) {
-	resp, err := auth.remote.RoleDelete(ctx, &pb.AuthRoleDeleteRequest{Role: role}, auth.callOpts...)
+	resp, err := auth.remote.RoleDelete(ctx, &pb.AuthRoleDeleteRequest{Role: role, Shivizdata: auth.ShivizLogger.PrepareSendZap("client making AuthRoleDeleteRequest", zapcore.InfoLevel)}, auth.callOpts...)
+	if resp != nil {
+		auth.ShivizLogger.UnpackReceiveZap("client got AuthRoleDeleteRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*AuthRoleDeleteResponse)(resp), ContextError(ctx, err)
 }
 

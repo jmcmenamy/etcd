@@ -21,7 +21,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -149,8 +151,9 @@ type watcher struct {
 	mu sync.Mutex
 
 	// streams holds all the active grpc streams keyed by ctx value.
-	streams map[string]*watchGRPCStream
-	lg      *zap.Logger
+	streams      map[string]*watchGRPCStream
+	lg           *zap.Logger
+	ShivizLogger *govec.GoLog
 }
 
 // watchGRPCStream tracks all watch resources attached to a single grpc stream.
@@ -188,7 +191,8 @@ type watchGRPCStream struct {
 	// closeErr is the error that closed the watch stream
 	closeErr error
 
-	lg *zap.Logger
+	lg           *zap.Logger
+	ShivizLogger *govec.GoLog
 }
 
 // watchStreamRequest is a union of the supported watch request operation types
@@ -249,8 +253,9 @@ func NewWatcher(c *Client) Watcher {
 
 func NewWatchFromWatchClient(wc pb.WatchClient, c *Client) Watcher {
 	w := &watcher{
-		remote:  wc,
-		streams: make(map[string]*watchGRPCStream),
+		remote:       wc,
+		streams:      make(map[string]*watchGRPCStream),
+		ShivizLogger: c.ShivizLogger,
 	}
 	if c != nil {
 		w.callOpts = c.callOpts
@@ -275,20 +280,21 @@ func (vc *valCtx) Err() error                  { return nil }
 func (w *watcher) newWatcherGRPCStream(inctx context.Context) *watchGRPCStream {
 	ctx, cancel := context.WithCancel(&valCtx{inctx})
 	wgs := &watchGRPCStream{
-		owner:      w,
-		remote:     w.remote,
-		callOpts:   w.callOpts,
-		ctx:        ctx,
-		ctxKey:     streamKeyFromCtx(inctx),
-		cancel:     cancel,
-		substreams: make(map[int64]*watcherStream),
-		respc:      make(chan *pb.WatchResponse),
-		reqc:       make(chan watchStreamRequest),
-		donec:      make(chan struct{}),
-		errc:       make(chan error, 1),
-		closingc:   make(chan *watcherStream),
-		resumec:    make(chan struct{}),
-		lg:         w.lg,
+		owner:        w,
+		remote:       w.remote,
+		callOpts:     w.callOpts,
+		ctx:          ctx,
+		ctxKey:       streamKeyFromCtx(inctx),
+		cancel:       cancel,
+		substreams:   make(map[int64]*watcherStream),
+		respc:        make(chan *pb.WatchResponse),
+		reqc:         make(chan watchStreamRequest),
+		donec:        make(chan struct{}),
+		errc:         make(chan error, 1),
+		closingc:     make(chan *watcherStream),
+		resumec:      make(chan struct{}),
+		lg:           w.lg,
+		ShivizLogger: w.ShivizLogger,
 	}
 	go wgs.run()
 	return wgs
@@ -566,12 +572,16 @@ func (w *watchGRPCStream) run() {
 				w.resuming = append(w.resuming, ws)
 				if len(w.resuming) == 1 {
 					// head of resume queue, can register a new watcher
-					if err := wc.Send(ws.initReq.toPB()); err != nil {
+					r := ws.initReq.toPB()
+					r.Shivizdata = w.ShivizLogger.PrepareSendZap("client sending a watch create request", zapcore.InfoLevel)
+					if err := wc.Send(r); err != nil {
 						w.lg.Debug("error when sending request", zap.Error(err))
 					}
 				}
 			case *progressRequest:
-				if err := wc.Send(wreq.toPB()); err != nil {
+				r := wreq.toPB()
+				r.Shivizdata = w.ShivizLogger.PrepareSendZap("client sending progress request", zapcore.InfoLevel)
+				if err := wc.Send(r); err != nil {
 					w.lg.Debug("error when sending request", zap.Error(err))
 				}
 			}
@@ -599,7 +609,9 @@ func (w *watchGRPCStream) run() {
 				}
 
 				if ws := w.nextResume(); ws != nil {
-					if err := wc.Send(ws.initReq.toPB()); err != nil {
+					r := ws.initReq.toPB()
+					r.Shivizdata = w.ShivizLogger.PrepareSendZap("client sending watch request", zapcore.InfoLevel)
+					if err := wc.Send(r); err != nil {
 						w.lg.Debug("error when sending request", zap.Error(err))
 					}
 				}
@@ -642,7 +654,8 @@ func (w *watchGRPCStream) run() {
 				cancelSet[pbresp.WatchId] = struct{}{}
 				cr := &pb.WatchRequest_CancelRequest{
 					CancelRequest: &pb.WatchCancelRequest{
-						WatchId: pbresp.WatchId,
+						WatchId:    pbresp.WatchId,
+						Shivizdata: w.ShivizLogger.PrepareSendZap("client making watch cancel request", zapcore.InfoLevel),
 					},
 				}
 				req := &pb.WatchRequest{RequestUnion: cr}
@@ -663,7 +676,9 @@ func (w *watchGRPCStream) run() {
 				return
 			}
 			if ws := w.nextResume(); ws != nil {
-				if err := wc.Send(ws.initReq.toPB()); err != nil {
+				r := ws.initReq.toPB()
+				r.Shivizdata = w.ShivizLogger.PrepareSendZap("client sending watch request", zapcore.InfoLevel)
+				if err := wc.Send(r); err != nil {
 					w.lg.Debug("error when sending request", zap.Error(err))
 				}
 			}
@@ -685,7 +700,8 @@ func (w *watchGRPCStream) run() {
 				cancelSet[ws.id] = struct{}{}
 				cr := &pb.WatchRequest_CancelRequest{
 					CancelRequest: &pb.WatchCancelRequest{
-						WatchId: ws.id,
+						WatchId:    ws.id,
+						Shivizdata: w.ShivizLogger.PrepareSendZap("client making watch request", zapcore.InfoLevel),
 					},
 				}
 				req := &pb.WatchRequest{RequestUnion: cr}
@@ -764,6 +780,10 @@ func (w *watchGRPCStream) unicastResponse(wr *WatchResponse, watchID int64) bool
 func (w *watchGRPCStream) serveWatchClient(wc pb.Watch_WatchClient) {
 	for {
 		resp, err := wc.Recv()
+		if resp != nil {
+			w.ShivizLogger.UnpackReceiveZap("client received watch request response", resp.Shivizdata, zapcore.InfoLevel)
+		}
+		// fmt.Printf("logger is %v, resp is %v\n", w.ShivizLogger, resp)
 		if err != nil {
 			select {
 			case w.errc <- err:

@@ -136,9 +136,14 @@ func (kv *kv) Delete(ctx context.Context, key string, opts ...OpOption) (*Delete
 }
 
 func (kv *kv) Compact(ctx context.Context, rev int64, opts ...CompactOption) (*CompactResponse, error) {
+	r := OpCompact(rev, opts...).toRequest()
+	r.Shivizdata = kv.ShivizLogger.PrepareSendZap("client sending compact request", zapcore.InfoLevel)
 	resp, err := kv.remote.Compact(ctx, OpCompact(rev, opts...).toRequest(), kv.callOpts...)
 	if err != nil {
 		return nil, ContextError(ctx, err)
+	}
+	if resp.Shivizdata != nil {
+		kv.ShivizLogger.UnpackReceiveZap("client got delete range request response", resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return (*CompactResponse)(resp), err
 }
@@ -164,7 +169,7 @@ func (kv *kv) Do(ctx context.Context, op Op) (OpResponse, error) {
 				rangeRequest.Shivizdata = kv.ShivizLogger.PrepareSendZap(fmt.Sprintf("client sending range request\n"), zapcore.InfoLevel)
 			}
 			resp, err = kv.remote.Range(ctx, rangeRequest, kv.callOpts...)
-			if resp.Shivizdata != nil {
+			if resp != nil {
 				kv.ShivizLogger.UnpackReceiveZap(fmt.Sprintf("client got range request response\n"), resp.Shivizdata, zapcore.InfoLevel)
 			}
 			if err == nil {
@@ -181,10 +186,10 @@ func (kv *kv) Do(ctx context.Context, op Op) (OpResponse, error) {
 			r.Shivizdata = kv.ShivizLogger.PrepareSendZap(fmt.Sprintf("client sending put request\n"), zapcore.InfoLevel)
 		}
 		resp, err = kv.remote.Put(ctx, r, kv.callOpts...)
+		if resp != nil {
+			kv.ShivizLogger.UnpackReceiveZap(fmt.Sprintf("client received put response\n"), resp.Shivizdata, zapcore.InfoLevel)
+		}
 		if err == nil {
-			if kv.ShivizLogger != nil {
-				kv.ShivizLogger.UnpackReceiveZap(fmt.Sprintf("client received put response\n"), resp.Shivizdata, zapcore.InfoLevel)
-			}
 			return OpResponse{put: (*PutResponse)(resp)}, nil
 		}
 	case tDeleteRange:
@@ -194,6 +199,9 @@ func (kv *kv) Do(ctx context.Context, op Op) (OpResponse, error) {
 			r.Shivizdata = kv.ShivizLogger.PrepareSendZap(fmt.Sprintf("client sending delete range request\n"), zapcore.InfoLevel)
 		}
 		resp, err = kv.remote.DeleteRange(ctx, r, kv.callOpts...)
+		if resp != nil {
+			kv.ShivizLogger.UnpackReceiveZap("client got delete range request response", resp.Shivizdata, zapcore.InfoLevel)
+		}
 		if err == nil {
 			return OpResponse{del: (*DeleteResponse)(resp)}, nil
 		}
@@ -204,6 +212,9 @@ func (kv *kv) Do(ctx context.Context, op Op) (OpResponse, error) {
 			txnRequest.Shivizdata = kv.ShivizLogger.PrepareSendZap(fmt.Sprintf("client sending txn request\n"), zapcore.InfoLevel)
 		}
 		resp, err = kv.remote.Txn(ctx, op.toTxnRequest(), kv.callOpts...)
+		if resp != nil {
+			kv.ShivizLogger.UnpackReceiveZap("client got txn request response", resp.Shivizdata, zapcore.InfoLevel)
+		}
 		if err == nil {
 			return OpResponse{txn: (*TxnResponse)(resp)}, nil
 		}

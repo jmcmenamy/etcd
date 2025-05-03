@@ -155,7 +155,7 @@ func WithContext(ctx context.Context) SessionOption {
 	}
 }
 
-// // Expired returns true iff the session is expired.
-// func (s *Session) Expired() bool {
-// 	return s.client.Expired(s.id)
-// }
+// Expired returns true iff the session is expired.
+func (s *Session) Expired() bool {
+	return s.client.Expired(s.id)
+}

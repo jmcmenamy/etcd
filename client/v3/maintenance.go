@@ -20,7 +20,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 
 	pb "go.etcd.io/etcd/api/v3/etcdserverpb"
@@ -109,6 +111,8 @@ type maintenance struct {
 	dial     func(endpoint string) (pb.MaintenanceClient, func(), error)
 	remote   pb.MaintenanceClient
 	callOpts []grpc.CallOption
+
+	ShivizLogger *govec.GoLog
 }
 
 func NewMaintenance(c *Client) Maintenance {
@@ -123,7 +127,8 @@ func NewMaintenance(c *Client) Maintenance {
 			cancel := func() { conn.Close() }
 			return RetryMaintenanceClient(c, conn), cancel, nil
 		},
-		remote: RetryMaintenanceClient(c, c.conn),
+		remote:       RetryMaintenanceClient(c, c.conn),
+		ShivizLogger: c.ShivizLogger,
 	}
 	if c != nil {
 		api.callOpts = c.callOpts
@@ -194,7 +199,10 @@ func (m *maintenance) Defragment(ctx context.Context, endpoint string) (*Defragm
 		return nil, ContextError(ctx, err)
 	}
 	defer cancel()
-	resp, err := remote.Defragment(ctx, &pb.DefragmentRequest{}, m.callOpts...)
+	resp, err := remote.Defragment(ctx, &pb.DefragmentRequest{Shivizdata: m.ShivizLogger.PrepareSendZap("client making DefragmentRequest", zapcore.InfoLevel)}, m.callOpts...)
+	if resp != nil {
+		m.ShivizLogger.UnpackReceiveZap("client got DefragmentRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
@@ -207,7 +215,10 @@ func (m *maintenance) Status(ctx context.Context, endpoint string) (*StatusRespo
 		return nil, ContextError(ctx, err)
 	}
 	defer cancel()
-	resp, err := remote.Status(ctx, &pb.StatusRequest{}, m.callOpts...)
+	resp, err := remote.Status(ctx, &pb.StatusRequest{Shivizdata: m.ShivizLogger.PrepareSendZap("client making StatusRequest", zapcore.InfoLevel)}, m.callOpts...)
+	if resp != nil {
+		m.ShivizLogger.UnpackReceiveZap("client got StatusRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
@@ -220,7 +231,10 @@ func (m *maintenance) HashKV(ctx context.Context, endpoint string, rev int64) (*
 		return nil, ContextError(ctx, err)
 	}
 	defer cancel()
-	resp, err := remote.HashKV(ctx, &pb.HashKVRequest{Revision: rev}, m.callOpts...)
+	resp, err := remote.HashKV(ctx, &pb.HashKVRequest{Revision: rev, Shivizdata: m.ShivizLogger.PrepareSendZap("client making HashKVRequest", zapcore.InfoLevel)}, m.callOpts...)
+	if resp != nil {
+		m.ShivizLogger.UnpackReceiveZap("client got HashKVRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
@@ -228,7 +242,7 @@ func (m *maintenance) HashKV(ctx context.Context, endpoint string, rev int64) (*
 }
 
 func (m *maintenance) SnapshotWithVersion(ctx context.Context) (*SnapshotResponse, error) {
-	ss, err := m.remote.Snapshot(ctx, &pb.SnapshotRequest{}, append(m.callOpts, withMax(defaultStreamMaxRetries))...)
+	ss, err := m.remote.Snapshot(ctx, &pb.SnapshotRequest{Shivizdata: m.ShivizLogger.PrepareSendZap("client making SnapshotRequest", zapcore.InfoLevel)}, append(m.callOpts, withMax(defaultStreamMaxRetries))...)
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
@@ -237,6 +251,9 @@ func (m *maintenance) SnapshotWithVersion(ctx context.Context) (*SnapshotRespons
 	pr, pw := io.Pipe()
 
 	resp, err := ss.Recv()
+	if resp != nil {
+		m.ShivizLogger.UnpackReceiveZap("client got SnapshotRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err != nil {
 		m.logAndCloseWithError(err, pw)
 		return nil, err
@@ -271,7 +288,7 @@ func (m *maintenance) SnapshotWithVersion(ctx context.Context) (*SnapshotRespons
 }
 
 func (m *maintenance) Snapshot(ctx context.Context) (io.ReadCloser, error) {
-	ss, err := m.remote.Snapshot(ctx, &pb.SnapshotRequest{}, append(m.callOpts, withMax(defaultStreamMaxRetries))...)
+	ss, err := m.remote.Snapshot(ctx, &pb.SnapshotRequest{Shivizdata: m.ShivizLogger.PrepareSendZap("client making SnapshotRequest", zapcore.InfoLevel)}, append(m.callOpts, withMax(defaultStreamMaxRetries))...)
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
@@ -282,6 +299,9 @@ func (m *maintenance) Snapshot(ctx context.Context) (io.ReadCloser, error) {
 	go func() {
 		for {
 			resp, err := ss.Recv()
+			if resp != nil {
+				m.ShivizLogger.UnpackReceiveZap("client got SnapshotRequest response", resp.Shivizdata, zapcore.InfoLevel)
+			}
 			if err != nil {
 				m.logAndCloseWithError(err, pw)
 				return
@@ -329,7 +349,10 @@ func (rc *snapshotReadCloser) Read(p []byte) (n int, err error) {
 }
 
 func (m *maintenance) MoveLeader(ctx context.Context, transfereeID uint64) (*MoveLeaderResponse, error) {
-	resp, err := m.remote.MoveLeader(ctx, &pb.MoveLeaderRequest{TargetID: transfereeID}, m.callOpts...)
+	resp, err := m.remote.MoveLeader(ctx, &pb.MoveLeaderRequest{TargetID: transfereeID, Shivizdata: m.ShivizLogger.PrepareSendZap("client making MoveLeaderRequest", zapcore.InfoLevel)}, m.callOpts...)
+	if resp != nil {
+		m.ShivizLogger.UnpackReceiveZap("client got MoveLeaderRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*MoveLeaderResponse)(resp), ContextError(ctx, err)
 }
 
@@ -345,6 +368,9 @@ func (m *maintenance) Downgrade(ctx context.Context, action DowngradeAction, ver
 	default:
 		return nil, errors.New("etcdclient: unknown downgrade action")
 	}
-	resp, err := m.remote.Downgrade(ctx, &pb.DowngradeRequest{Action: actionType, Version: version}, m.callOpts...)
+	resp, err := m.remote.Downgrade(ctx, &pb.DowngradeRequest{Action: actionType, Version: version, Shivizdata: m.ShivizLogger.PrepareSendZap("client making DowngradeRequest", zapcore.InfoLevel)}, m.callOpts...)
+	if resp != nil {
+		m.ShivizLogger.UnpackReceiveZap("client got DowngradeRequest response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	return (*DowngradeResponse)(resp), ContextError(ctx, err)
 }

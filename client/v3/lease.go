@@ -20,7 +20,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DistributedClocks/GoVector/govec"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
@@ -138,7 +140,7 @@ type Lease interface {
 
 	// // Expired returns true iff the lease is expired (more precisely: iff the
 	// // lease was expired during the execution of the Expired() call).
-	// Expired(id LeaseID) bool
+	Expired(id LeaseID) bool
 
 	// KeepAliveOnce renews the lease once. The response corresponds to the
 	// first message from calling KeepAlive. If the response has a recoverable
@@ -178,7 +180,8 @@ type lessor struct {
 
 	callOpts []grpc.CallOption
 
-	lg *zap.Logger
+	lg           *zap.Logger
+	ShivizLogger *govec.GoLog
 }
 
 // keepAlive multiplexes a keepalive for a lease over multiple channels
@@ -203,6 +206,7 @@ func NewLeaseFromLeaseClient(remote pb.LeaseClient, c *Client, keepAliveTimeout 
 		keepAlives:            make(map[LeaseID]*keepAlive),
 		remote:                remote,
 		firstKeepAliveTimeout: keepAliveTimeout,
+		ShivizLogger:          c.ShivizLogger,
 	}
 	if l.firstKeepAliveTimeout == time.Second {
 		l.firstKeepAliveTimeout = defaultTTL
@@ -217,8 +221,11 @@ func NewLeaseFromLeaseClient(remote pb.LeaseClient, c *Client, keepAliveTimeout 
 }
 
 func (l *lessor) Grant(ctx context.Context, ttl int64) (*LeaseGrantResponse, error) {
-	r := &pb.LeaseGrantRequest{TTL: ttl}
+	r := &pb.LeaseGrantRequest{TTL: ttl, Shivizdata: l.ShivizLogger.PrepareSendZap("client making lease grant request", zapcore.InfoLevel)}
 	resp, err := l.remote.LeaseGrant(ctx, r, l.callOpts...)
+	if resp != nil {
+		l.ShivizLogger.UnpackReceiveZap("client got lease grant request response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err == nil {
 		gresp := &LeaseGrantResponse{
 			ResponseHeader: resp.GetHeader(),
@@ -232,8 +239,11 @@ func (l *lessor) Grant(ctx context.Context, ttl int64) (*LeaseGrantResponse, err
 }
 
 func (l *lessor) Revoke(ctx context.Context, id LeaseID) (*LeaseRevokeResponse, error) {
-	r := &pb.LeaseRevokeRequest{ID: int64(id)}
+	r := &pb.LeaseRevokeRequest{ID: int64(id), Shivizdata: l.ShivizLogger.PrepareSendZap("client making lease revoke request", zapcore.InfoLevel)}
 	resp, err := l.remote.LeaseRevoke(ctx, r, l.callOpts...)
+	if resp != nil {
+		l.ShivizLogger.UnpackReceiveZap("client got lease revoke request response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err == nil {
 		return (*LeaseRevokeResponse)(resp), nil
 	}
@@ -242,7 +252,11 @@ func (l *lessor) Revoke(ctx context.Context, id LeaseID) (*LeaseRevokeResponse, 
 
 func (l *lessor) TimeToLive(ctx context.Context, id LeaseID, opts ...LeaseOption) (*LeaseTimeToLiveResponse, error) {
 	r := toLeaseTimeToLiveRequest(id, opts...)
+	r.Shivizdata = l.ShivizLogger.PrepareSendZap("client making lease time to live request request", zapcore.InfoLevel)
 	resp, err := l.remote.LeaseTimeToLive(ctx, r, l.callOpts...)
+	if resp != nil {
+		l.ShivizLogger.UnpackReceiveZap("client got lease time to live request response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
@@ -257,7 +271,10 @@ func (l *lessor) TimeToLive(ctx context.Context, id LeaseID, opts ...LeaseOption
 }
 
 func (l *lessor) Leases(ctx context.Context) (*LeaseLeasesResponse, error) {
-	resp, err := l.remote.LeaseLeases(ctx, &pb.LeaseLeasesRequest{}, l.callOpts...)
+	resp, err := l.remote.LeaseLeases(ctx, &pb.LeaseLeasesRequest{Shivizdata: l.ShivizLogger.PrepareSendZap("client making lease leases request", zapcore.InfoLevel)}, l.callOpts...)
+	if resp != nil {
+		l.ShivizLogger.UnpackReceiveZap("client got lease leases request response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if err == nil {
 		leases := make([]LeaseStatus, len(resp.Leases))
 		for i := range resp.Leases {
@@ -432,12 +449,15 @@ func (l *lessor) keepAliveOnce(ctx context.Context, id LeaseID) (karesp *LeaseKe
 		}
 	}()
 
-	err = stream.Send(&pb.LeaseKeepAliveRequest{ID: int64(id)})
+	err = stream.Send(&pb.LeaseKeepAliveRequest{ID: int64(id), Shivizdata: l.ShivizLogger.PrepareSendZap("client making lease keep alive request", zapcore.InfoLevel)})
 	if err != nil {
 		return nil, ContextError(ctx, err)
 	}
 
 	resp, rerr := stream.Recv()
+	if resp != nil {
+		l.ShivizLogger.UnpackReceiveZap("client got lease keep alive request response", resp.Shivizdata, zapcore.InfoLevel)
+	}
 	if rerr != nil {
 		return nil, ContextError(ctx, rerr)
 	}
@@ -474,6 +494,9 @@ func (l *lessor) recvKeepAliveLoop() (gerr error) {
 		} else {
 			for {
 				resp, err := stream.Recv()
+				if resp != nil {
+					l.ShivizLogger.UnpackReceiveZap("client got lease keep alive request response", resp.Shivizdata, zapcore.InfoLevel)
+				}
 				if err != nil {
 					if canceledByCaller(l.stopCtx, err) {
 						return err
@@ -601,7 +624,7 @@ func (l *lessor) sendKeepAliveLoop(stream pb.Lease_LeaseKeepAliveClient) {
 		l.mu.Unlock()
 
 		for _, id := range tosend {
-			r := &pb.LeaseKeepAliveRequest{ID: int64(id)}
+			r := &pb.LeaseKeepAliveRequest{ID: int64(id), Shivizdata: l.ShivizLogger.PrepareSendZap("client making lease keep alive request", zapcore.InfoLevel)}
 			if err := stream.Send(r); err != nil {
 				l.lg.Warn("error occurred during lease keep alive request sending",
 					zap.Error(err),
@@ -629,12 +652,12 @@ func (ka *keepAlive) close() {
 	}
 }
 
-// func (l *lessor) Expired(id LeaseID) bool {
-// 	l.mu.Lock()
-// 	defer l.mu.Unlock()
-// 	ka, ok := l.keepAlives[id]
-// 	if !ok {
-// 		return true
-// 	}
-// 	return ka.deadline.Before(time.Now())
-// }
+func (l *lessor) Expired(id LeaseID) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	ka, ok := l.keepAlives[id]
+	if !ok {
+		return true
+	}
+	return ka.deadline.Before(time.Now())
+}

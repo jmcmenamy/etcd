@@ -155,7 +155,7 @@ func (txn *txn) Commit() (*TxnResponse, error) {
 	if err != nil {
 		return nil, ContextError(txn.ctx, err)
 	}
-	if resp.Shivizdata != nil {
+	if resp != nil {
 		shivizLogger.UnpackReceiveZap(fmt.Sprint("client get txn response\n"), resp.Shivizdata, zapcore.InfoLevel)
 	}
 	return (*TxnResponse)(resp), nil
