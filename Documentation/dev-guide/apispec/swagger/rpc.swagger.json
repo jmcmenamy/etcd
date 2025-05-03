@@ -2812,6 +2812,10 @@
     "etcdserverpbMemberUpdateResponse": {
       "type": "object",
       "properties": {
+        "Shivizdata": {
+          "type": "string",
+          "format": "byte"
+        },
         "header": {
           "$ref": "#/definitions/etcdserverpbResponseHeader"
         },

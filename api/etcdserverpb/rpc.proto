@@ -1104,7 +1104,8 @@ message MemberUpdateRequest {
   repeated string peerURLs = 2;
 }
 
-message MemberUpdateResponse{
+message MemberUpdateResponse {
+  bytes Shivizdata = 1400;
   option (versionpb.etcd_version_msg) = "3.0";
 
   ResponseHeader header = 1;
