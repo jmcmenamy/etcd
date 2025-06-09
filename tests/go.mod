@@ -16,6 +16,7 @@ replace (
 )
 
 require (
+	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd
 	github.com/anishathalye/porcupine v0.1.4
 	github.com/coreos/go-semver v0.3.1
 	github.com/golang/protobuf v1.5.4
@@ -51,7 +52,6 @@ require (
 )
 
 require (
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/speakeasy v0.2.0 // indirect
