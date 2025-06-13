@@ -238,3 +238,5 @@ require (
 )
 
 replace go.etcd.io/raft/v3 => ../../../raft
+
+replace github.com/jmcmenamy/GoVector => ../../../GoVector

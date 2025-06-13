@@ -236,8 +236,6 @@ github.com/jingyugao/rowserrcheck v1.1.1 h1:zibz55j/MJtLsjP1OF4bSdgXxwL1b+Vn7Tjz
 github.com/jingyugao/rowserrcheck v1.1.1/go.mod h1:4yvlZSDb3IyDTUZJUmpZfm2Hwok+Dtp+nu2qOq+er9c=
 github.com/jjti/go-spancheck v0.6.2 h1:iYtoxqPMzHUPp7St+5yA8+cONdyXD3ug6KK15n7Pklk=
 github.com/jjti/go-spancheck v0.6.2/go.mod h1:+X7lvIrR5ZdUTkxFYqzJ0abr8Sb5LOo80uOhWNqIrYA=
-github.com/jmcmenamy/GoVector v0.2.0 h1:+KaL7C3S8av0VB12c2rHUnQQMFMQ2UNN+PAwz7i6EiE=
-github.com/jmcmenamy/GoVector v0.2.0/go.mod h1:105nf6+5cYB5QHJ3jyO9LSU+3tP7zB1J9U9tSX/5RNs=
 github.com/jmhodges/clock v1.2.0 h1:eq4kys+NI0PLngzaHEe7AmPT90XMGIEySD1JfV1PDIs=
 github.com/jmhodges/clock v1.2.0/go.mod h1:qKjhA7x7u/lQpPB1XAqX1b1lCI/w3/fNuYpI/ZjLynI=
 github.com/jmoiron/sqlx v1.3.5 h1:vFFPA71p1o5gAeqtEAwLU4dnX2napprKtHr7PYIcN3g=
