@@ -16,7 +16,6 @@ replace (
 )
 
 require (
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd
 	github.com/anishathalye/porcupine v0.1.4
 	github.com/coreos/go-semver v0.3.1
 	github.com/golang/protobuf v1.5.4
@@ -24,6 +23,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0
+	github.com/jmcmenamy/GoVector v0.2.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/common v0.61.0
 	github.com/soheilhy/cmux v0.1.5
@@ -110,4 +110,4 @@ require (
 
 replace go.etcd.io/raft/v3 => ../../raft
 
-replace github.com/DistributedClocks/GoVector => ../../GoVector
+replace github.com/jmcmenamy/GoVector => ../../GoVector

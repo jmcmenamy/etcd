@@ -5,7 +5,6 @@ go 1.23
 toolchain go1.23.4
 
 require (
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd
 	github.com/coreos/go-semver v0.3.1
 	github.com/coreos/go-systemd/v22 v22.5.0
 	github.com/dustin/go-humanize v1.0.1
@@ -18,6 +17,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0
+	github.com/jmcmenamy/GoVector v0.2.0
 	github.com/jonboulle/clockwork v0.4.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/client_model v0.6.1
@@ -92,7 +92,7 @@ replace (
 
 replace go.etcd.io/raft/v3 => ../../raft
 
-replace github.com/DistributedClocks/GoVector => ../../GoVector
+replace github.com/jmcmenamy/GoVector => ../../GoVector
 
 // Bad imports are sometimes causing attempts to pull that code.
 // This makes the error more explicit.

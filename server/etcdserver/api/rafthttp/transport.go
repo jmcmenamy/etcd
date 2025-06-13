@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
+	"github.com/jmcmenamy/GoVector/govec"
 	"github.com/xiang90/probing"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"

@@ -22,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
+	"github.com/jmcmenamy/GoVector/govec"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
 

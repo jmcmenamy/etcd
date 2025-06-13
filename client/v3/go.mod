@@ -5,10 +5,10 @@ go 1.23
 toolchain go1.23.4
 
 require (
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd
 	github.com/coreos/go-semver v0.3.1
 	github.com/dustin/go-humanize v1.0.1
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+	github.com/jmcmenamy/GoVector v0.2.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/stretchr/testify v1.10.0
 	go.etcd.io/etcd/api/v3 v3.6.0-alpha.0
@@ -61,4 +61,4 @@ replace (
 	go.etcd.io/tests/v3 => ./FORBIDDEN_DEPENDENCY
 )
 
-replace github.com/DistributedClocks/GoVector => ../../../GoVector
+replace github.com/jmcmenamy/GoVector => ../../../GoVector

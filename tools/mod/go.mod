@@ -32,7 +32,6 @@ require (
 	github.com/Antonboom/testifylint v1.5.2 // indirect
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 	github.com/Crocmagnon/fatcontext v0.5.3 // indirect
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd // indirect
 	github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 // indirect
 	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.0 // indirect
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
@@ -114,6 +113,7 @@ require (
 	github.com/jgautheron/goconst v1.7.1 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
 	github.com/jjti/go-spancheck v0.6.2 // indirect
+	github.com/jmcmenamy/GoVector v0.2.0 // indirect
 	github.com/jmhodges/clock v1.2.0 // indirect
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/julz/importas v0.1.0 // indirect

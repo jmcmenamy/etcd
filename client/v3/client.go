@@ -22,8 +22,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/coreos/go-semver/semver"
+	"github.com/jmcmenamy/GoVector/govec"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

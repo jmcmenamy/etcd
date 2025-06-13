@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/DistributedClocks/GoVector/govec"
+	"github.com/jmcmenamy/GoVector/govec"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 

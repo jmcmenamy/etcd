@@ -41,7 +41,6 @@ require (
 )
 
 require (
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
@@ -64,6 +63,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jmcmenamy/GoVector v0.2.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -109,4 +109,4 @@ require (
 
 replace go.etcd.io/raft/v3 => ../raft
 
-replace github.com/DistributedClocks/GoVector => ../GoVector
+replace github.com/jmcmenamy/GoVector => ../GoVector

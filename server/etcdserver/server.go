@@ -29,9 +29,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/coreos/go-semver/semver"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/jmcmenamy/GoVector/govec"
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
 

@@ -22,7 +22,6 @@ require (
 )
 
 require (
-	github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
@@ -33,6 +32,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jmcmenamy/GoVector v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
@@ -58,7 +58,7 @@ replace (
 	go.etcd.io/etcd/pkg/v3 => ../pkg
 )
 
-replace github.com/DistributedClocks/GoVector => ../../GoVector
+replace github.com/jmcmenamy/GoVector => ../../GoVector
 
 // Bad imports are sometimes causing attempts to pull that code.
 // This makes the error more explicit.

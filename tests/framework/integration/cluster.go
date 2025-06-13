@@ -34,9 +34,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/jmcmenamy/GoVector/govec"
 	"github.com/soheilhy/cmux"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

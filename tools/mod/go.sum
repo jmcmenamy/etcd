@@ -16,8 +16,6 @@ github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c h1:pxW6RcqyfI9/k
 github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/Crocmagnon/fatcontext v0.5.3 h1:zCh/wjc9oyeF+Gmp+V60wetm8ph2tlsxocgg/J0hOps=
 github.com/Crocmagnon/fatcontext v0.5.3/go.mod h1:XoCQYY1J+XTfyv74qLXvNw4xFunr3L1wkopIIKG7wGM=
-github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd h1:x2JcammKt0qF8zycVwmvJf+Y1GZTpJcLxaAhdo9ZGYQ=
-github.com/DistributedClocks/GoVector v0.0.0-20240117185643-ae07272d0ebd/go.mod h1:KhO62KYM3s2gEKM3ESiiI4pgvEPHz96Y1R1ceFpyVBg=
 github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 h1:sHglBQTwgx+rWPdisA5ynNEsoARbiCBOyGcJM4/OzsM=
 github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24/go.mod h1:4UJr5HIiMZrwgkSPdsjy2uOQExX/WEILpIrO9UPGuXs=
 github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.0 h1:/fTUt5vmbkAcMBt4YQiuC23cV0kEsN1MVMNqeOW43cU=
@@ -238,6 +236,8 @@ github.com/jingyugao/rowserrcheck v1.1.1 h1:zibz55j/MJtLsjP1OF4bSdgXxwL1b+Vn7Tjz
 github.com/jingyugao/rowserrcheck v1.1.1/go.mod h1:4yvlZSDb3IyDTUZJUmpZfm2Hwok+Dtp+nu2qOq+er9c=
 github.com/jjti/go-spancheck v0.6.2 h1:iYtoxqPMzHUPp7St+5yA8+cONdyXD3ug6KK15n7Pklk=
 github.com/jjti/go-spancheck v0.6.2/go.mod h1:+X7lvIrR5ZdUTkxFYqzJ0abr8Sb5LOo80uOhWNqIrYA=
+github.com/jmcmenamy/GoVector v0.2.0 h1:+KaL7C3S8av0VB12c2rHUnQQMFMQ2UNN+PAwz7i6EiE=
+github.com/jmcmenamy/GoVector v0.2.0/go.mod h1:105nf6+5cYB5QHJ3jyO9LSU+3tP7zB1J9U9tSX/5RNs=
 github.com/jmhodges/clock v1.2.0 h1:eq4kys+NI0PLngzaHEe7AmPT90XMGIEySD1JfV1PDIs=
 github.com/jmhodges/clock v1.2.0/go.mod h1:qKjhA7x7u/lQpPB1XAqX1b1lCI/w3/fNuYpI/ZjLynI=
 github.com/jmoiron/sqlx v1.3.5 h1:vFFPA71p1o5gAeqtEAwLU4dnX2napprKtHr7PYIcN3g=
@@ -259,7 +259,6 @@ github.com/klauspost/compress v1.17.9/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ib
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.3/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
-github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
